@@ -11,7 +11,7 @@
 # Some fields will be set automatically during setup if they are unchanged.
 #
 # Don't include "-00" or "-latest" in the filename.
-# Labels in the form draft-<yourname>-<workgroup>-<name>-latest are used by
+# Labels in the form draft-<yourname>-<workgroup>-<ngit@github.com:emmestl/draft-guardian-protocol.gitame>-latest are used by
 # the tools to refer to the current version; see "docname" for example.
 #
 # This template uses kramdown-rfc: https://github.com/cabo/kramdown-rfc
@@ -62,13 +62,13 @@ TODO Abstract
 # Introduction
 
 
-Guardianship offers a way for end-users to acheive improved security in constrianed settings by allowing alternative trusted devices to update security detail on their behalf. The trusted device will be denoted guardian. 
+Guardianship offers a way for end-users to achieve improved security in constrained settings by allowing alternative trusted devices to update security detail on their behalf. The trusted device will be denoted guardian. 
 
-The guardianship protocol builds upon MLS **ref MLS-rfc** and is for improved security in group comminication between multiple distinct entities. Readers that are not familiar with MLS are refered to MLS **ref** to gain a genaral understanding. 
+The guardianship protocol builds upon MLS **ref MLS-rfc** and is for improved security in group communication between multiple distinct entities. Readers that are not familiar with MLS are referred to MLS **ref** to gain a general understanding. 
 
-The protocol consists of two opperational modes, distinguished by the groups general knowledge of guardians. For mode concerning anonymous guardians ref section **Anonymous Garudian** for section conserning known guardianship and update ref section **Public Guardian** respectivley.
+The protocol consists of two operational modes, distinguished by the groups general knowledge of guardians. For mode concerning anonymous guardians ref section **Anonymous Garudian** for section concerning known guardianship and update ref section **Public Guardian** respectively.
 
-TODO should refereece to paper be here? Intereseted readers can learn more etc.
+TODO should reference to paper be here? Intereseted readers can learn more etc.git@github.com:emmestl/draft-guardian-protocol.git
 
 
 # Conventions and Definitions
@@ -102,8 +102,8 @@ Requires altercations to MLS
 
 ## Applicable use cases
 
-## Protocol Descriotion
-TODO Ref to separete document that conains a thurough description
+## Protocol Description
+TODO Ref to separate document that contains a thorough description
 
 ## Protocol Restrictions
 
