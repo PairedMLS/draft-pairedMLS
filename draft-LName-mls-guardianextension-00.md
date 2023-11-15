@@ -1,24 +1,5 @@
 ---
-###
-# Internet-Draft Markdown Template
-#
-# Rename this file from draft-todo-yourname-protocol.md to get started.
-# Draft name format is "draft-<yourname>-<workgroup>-<name>.md".
-#
-# For initial setup, you only need to edit the first block of fields.
-# Only "title" needs to be changed; delete "abbrev" if your title is short.
-# Any other content can be edited, but be careful not to introduce errors.
-# Some fields will be set automatically during setup if they are unchanged.
-#
-# Don't include "-00" or "-latest" in the filename.
-# Labels in the form draft-<yourname>-<workgroup>-<ngit@github.com:emmestl/draft-guardian-protocol.gitame>-latest are used by
-# the tools to refer to the current version; see "docname" for example.
-#
-# This template uses kramdown-rfc: https://github.com/cabo/kramdown-rfc
-# You can replace the entire file if you prefer a different format.
-# Change the file extension to match the format (.xml for XML, etc...)
-#
-###
+
 title: "Guardianship extension for MLS"
 #abbrev: "TODO - Abbreviation"
 category: info
@@ -91,26 +72,48 @@ Copyright (c) 2023 IETF Trust and the persons identified as the document authors
 
 This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document. Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Revised BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Revised BSD License.
 
+
+# Terminology
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
+
+The terms MLS client, MLS member, MLS group, Leaf Node, GroupContext, KeyPackage, Signature Key, and RequiredCapabilities have the same meanings as in the MLS protocol [I-D.ietf-mls-protocol].
+
 # Introduction
 
+Guardianship offers a way for end-users to achieve improved security in constrained settings by allowing a paired trusted device to update security parameters on their behalf. The trusted device is denoted as the guardian. The guardianship protocol builds upon MLS (see [RFC9420](https://www.rfc-editor.org/info/rfc9420)). While this document makes recommendations for two versions of guardian extensions, interested readers can learn about other cases that were evaluated at https://github.com/emmestl/draft-guardian-protocol.git.
 
-Guardianship offers a way for end-users to achieve improved security in constrained settings by allowing a paired trusted device to update security parameters on their behalf. The trusted device is denoted as the guardian. 
-
-The guardianship protocol builds upon MLS **ref MLS-rfc** and is for improved security in group communication between multiple distinct entities. Readers that are not familiar with MLS are referred to MLS **ref** to gain a general understanding. 
-
-The protocol consists of two operational modes, distinguished by the groups general knowledge of guardians. For mode concerning anonymous guardians ref section **Anonymous Garudian** for section concerning known guardianship and update ref section **Public Guardian** respectively.
-
-TODO should reference to paper be here? Intereseted readers can learn more etc.git@github.com:emmestl/draft-guardian-protocol.git
-
+The Guardian Protocol (GP) consists of two operational modes, distinguished by the group's general knowledge of guardians: *Anonymous Guardian* and *Public Guardian*. 
 
 # Conventions and Definitions
 
-{::boilerplate bcp14-tagged}
+_Edge Device_: An edge device is an original user equipment device. Such a device may operate in receive-only mode or in another limited fashion such that sending regular keying updates is impractical or even impossible
+
+_Guardian Device_: The guardian device operates from a secured space with reliable network access. The intent is for the guardian device to be paired with, and provide keying updates on behalf of the edge device. This supports forward secrecy in the event the edge device is compromised. When the edge device is in an active state that allows for it to perform keying updates of its own, the guardian device may be placed in offline mode.
+
+_Anchor_:  The MLS leaf node which acts as a shared access point(s) into the underlying group by the guardian and edge device is called an anchor. The anchor is viewed as a group member by the rest of the group and has it's own unique credentials. 
+
+_Edge Device Operational Modes_
+An edge device has two modes of operation. Before an edge device enters a new state the MLS delivery service (DS), which facilitates group state consensus by ensuring in-order delivery of MLS messages, must be informed. The operational states are:
+* _Online mode_: The edge device is available and running the group protocol as per specification. In this state it does not have need of a guardian.
+* _Limited mode_: The edge device has the ability to receive application messages and key update messages, but it may not preform its own key updates. Depending on environ- mental situation, an edge device may still be allowed to send application messages while in this mode. In this state, a guardian may send updates on behalf of the edge device.
+
+_Guardian Operational Modes_
+A guardian may be in one of two modes as well, contingent on the mode of the edge.
+* _Offline mode_: When an edge device is online the guardian may be set to be inactive (depending on the guardianship construction).
+* _Online mode_: When the edge device enters limited mode, it becomes reliant on a guardian. Therefore the guardian status must be set to online in order to send key updates.
+
+_Shared Randomness_: A seed is shared between edge and guardian that can be updated in a deterministic manner. Without the knowledge of the seed, key generation will look random. 
+
+<!--{::boilerplate bcp14-tagged}-->
 
 
 # Anonymous Guardian
 
-Ref 5
+An anonymous guardian is when the guardian presence is undetectable by the other group members. Through the edge device and guardian sharing an MLS leaf node, signature key pair, and randomness its communications to the group would appear to be coming from a sole group member instead of a guardian-edge pair to other group members.
+
+Traceability of the Anonymous Guardian is limited to the MLS Authentication Service (AS) and Delivery Service (DS). Depending on the DS design, the edge-guardian pairing could be detected by the (DS) to properly deliver messages. In a broadcast/multicast DS design scheme even the DS would be oblivious to the presence of the guardian. 
+
 
 ## Applicable use cases
 This mode of application is desirable when group members do not want to explicitly inform all other group members that they are unable to update. 
@@ -139,10 +142,17 @@ TODO Ref to separate document that contains a thorough description
 
 ## Protocol Restrictions
 
-
 --- back
 
 # Acknowledgments
 {:numbered="false"}
 
 TODO acknowledge.
+
+# Normative References
+
+[I-D.ietf-mls-protocol]
+Barnes, R., Beurdouche, B., Robert, R., Millican, J., Omara, E., and K. Cohn-Gordon, "The Messaging Layer Security (MLS) Protocol", Work in Progress, Internet-Draft, draft-ietf-mls-protocol-20, 27 March 2023, <https://datatracker.ietf.org/doc/html/draft-ietf-mls-protocol-20>.
+
+# References 
+[1] <https://www.rfc-editor.org/info/rfc9420> "MLS RFC"
