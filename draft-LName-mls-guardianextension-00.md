@@ -66,7 +66,7 @@ Internet-Drafts are draft documents valid for a maximum of six months and may be
 
 This Internet-Draft will expire on XX May 2024.
 
-#Copyright Notice 
+# Copyright Notice 
 
 Copyright (c) 2023 IETF Trust and the persons identified as the document authors.  All rights reserved.
 
@@ -81,9 +81,9 @@ The terms MLS client, MLS member, MLS group, Leaf Node, GroupContext, KeyPackage
 
 # Introduction
 
-Guardianship offers a way for end-users to achieve improved security in constrained settings by allowing a paired trusted device to update security parameters on their behalf. The trusted device is denoted as the guardian. The guardianship protocol builds upon MLS (see [RFC9420](https://www.rfc-editor.org/info/rfc9420)). While this document makes recommendations for two versions of guardian extensions, interested readers can learn about other cases that were evaluated at https://github.com/emmestl/draft-guardian-protocol.git.
+Guardianship offers a way for end-users to achieve improved security in constrained settings by allowing a paired trusted device to update security parameters on their behalf. The end-user's trusted device is denoted as the guardian. The guardianship protocol builds upon MLS (see [RFC9420](https://www.rfc-editor.org/info/rfc9420)). While this document makes recommendations for two versions of guardian extensions, interested readers can learn about other cases that were evaluated at https://github.com/emmestl/draft-guardian-protocol.git.
 
-The Guardian Protocol (GP) consists of two operational modes, distinguished by the group's general knowledge of guardians: *Anonymous Guardian* and *Public Guardian*. 
+The Guardian Protocol (GP) consists of two operational modes, distinguished by the group's general knowledge of guardians: *Anonymous Guardian* and *Public Guardian*. To enable the guardian extension, the MLS leaf node must accomodate being shared by at least two devices, the guardian and edge(s). This means that, depending on the operational mode, the leaf node would also support at least two sets of signature keys. 
 
 # Conventions and Definitions
 
@@ -91,6 +91,7 @@ _Edge Device_: An edge device is an original user equipment device. Such a devic
 
 _Guardian Device_: The guardian device operates from a secured space with reliable network access. The intent is for the guardian device to be paired with, and provide keying updates on behalf of the edge device. This supports forward secrecy in the event the edge device is compromised. When the edge device is in an active state that allows for it to perform keying updates of its own, the guardian device may be placed in offline mode.
 
+**TODO: Since we are making a MLS extension, should we stick with just "Leaf Node" instead of "anchor"?**
 _Anchor_:  The MLS leaf node which acts as a shared access point(s) into the underlying group by the guardian and edge device is called an anchor. The anchor is viewed as a group member by the rest of the group and has it's own unique credentials. 
 
 _Edge Device Operational Modes_
@@ -103,10 +104,9 @@ A guardian may be in one of two modes as well, contingent on the mode of the edg
 * _Offline mode_: When an edge device is online the guardian may be set to be inactive (depending on the guardianship construction).
 * _Online mode_: When the edge device enters limited mode, it becomes reliant on a guardian. Therefore the guardian status must be set to online in order to send key updates.
 
-_Shared Randomness_: A seed is shared between edge and guardian that can be updated in a deterministic manner. Without the knowledge of the seed, key generation will look random. 
+_Shared Randomness_: In order for a guardian to heal an edge that is unable to self-update, they must share a random tape. Practically, this is accomplished by sharing a seed for random number generation between edge and guardian. This random seed SHOULD/IS RECOMMENDED be shared via secure hardware or it MAY be shared over a secure channel. Readers are encouraged to see [www.link.to.our.paper.com] for security tradeoff analysis. 
 
 <!--{::boilerplate bcp14-tagged}-->
-
 
 # Anonymous Guardian
 
@@ -127,15 +127,46 @@ The protocol uses default MLS together with a seperate secure 1-1 communication 
 
 ## Protocol Restrictions
 
+## Ratchet Tree Operations
 
+### Leaf Node Contents
+
+The MLS leaf node will need to support multiple signature keys for the public guardian. The leaf node content is modified by changing `signature_key` to a vector of `SignaturePublicKey`. 
+
+
+    struct {
+        HPKEPublicKey encryption_key;
+        SignaturePublicKey signature_key<V>;
+        Credential credential;
+        Capabilities capabilities;
+
+        LeafNodeSource leaf_node_source;
+        select (LeafNode.leaf_node_source) {
+            case key_package:
+                Lifetime lifetime;
+
+            case update:
+                struct{};
+
+            case commit:
+                opaque parent_hash<V>;
+        };
+
+        Extension extensions<V>;
+        /* SignWithLabel(., "LeafNodeTBS", LeafNodeTBS) */
+        opaque signature<V>;
+    } LeafNode;
 
 
 # Public Guardian
+
+A public guardian is one that shares an anchor node with the edge but has its own unique signing key. Updates that come from the guardian and edge (when online) will be traceable by other group members. 
 
 Ref fig 4, 6
 Requires altercations to MLS
 
 ## Applicable use cases
+This operational mode is applicable when a user wants to explicitly announce that their edge device is in limited mode. 
 
 ## Protocol Description
 TODO Ref to separate document that contains a thorough description
