@@ -23,16 +23,13 @@ venue:
   latest: https://example.com/LATEST
 
 author:
- -
-    fullname: Elsie Fondevik 
+ -  fullname: Elsie Fondevik 
     organization: Naval Postgraduate School
     email: elsie.fondevik@kongsberg.com
-- 
-    fullname: Britta Hale
+-   fullname: Britta Hale
     organization: Naval Postgraduate School
     email: britta.hale@nps.edu
-- 
-    fullname: Xisen Tian 
+-   fullname: Xisen Tian 
     organization: Naval Postgraduate School
     email: xisen.tian1@nps.edu
 
@@ -81,7 +78,7 @@ The terms MLS client, MLS member, MLS group, Leaf Node, GroupContext, KeyPackage
 
 # Introduction
 
-Guardianship offers a way for end-users to achieve improved security in constrained settings by allowing a paired trusted device to update security parameters on their behalf. The end-user's trusted device is denoted as the guardian. The guardianship protocol builds upon MLS (see [RFC9420](https://www.rfc-editor.org/info/rfc9420)). While this document makes recommendations for two versions of guardian extensions, interested readers can learn about other cases that were evaluated at https://github.com/emmestl/draft-guardian-protocol.git.
+Guardianship offers a way for end-users to achieve improved security in constrained settings by allowing a paired trusted device to update security parameters on their behalf. The end-user's trusted device is denoted as the guardian. The guardianship protocol builds upon MLS (see [RFC9420](https://www.rfc-editor.org/info/rfc9420)). While this document makes recommendations for two versions of guardian extensions, interested readers can learn about other cases that were evaluated at https://github.com/emmestl/draft-guardian-protocol.git. #should this be eprint?
 
 The Guardian Protocol (GP) consists of two operational modes, distinguished by the group's general knowledge of guardians: *Anonymous Guardian* and *Public Guardian*. To enable the guardian extension, the MLS leaf node must accomodate being shared by at least two devices, the guardian and edge(s). This means that, depending on the operational mode, the leaf node would also support at least two sets of signature keys. 
 
