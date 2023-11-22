@@ -1,6 +1,6 @@
 ---
 
-title: "Guardianship extension for MLS"
+title: "PCS in Limited Modes"
 #abbrev: "TODO - Abbreviation"
 category: info
 
@@ -73,11 +73,58 @@ Copyright (c) 2023 IETF Trust and the persons identified as the document authors
 This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document. Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Revised BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Revised BSD License.
 
 
+# Table of Contents
+
+1. Terminology
+2. Introduction
+3. Convention and Definitions
+4. Extension Description
+5. IANA Considerations
+   5.1. Guardian MLS Extension Type 
+   5.2. Guardian MLS Anonymous Mode
+   5.2.1. Use Cases
+   5.2.2. Protocol Description 
+   5.2.3. Restrictions
+   5.3. Guardian MLS Public Mode
+   5.3.1 Use Cases
+   5.3.2 Protocol Description
+   5.3.3 Restrictions 
+6. Security Considerations
+7. Normative References 
+
 # Terminology
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
 
 The terms MLS client, MLS member, MLS group, Leaf Node, GroupContext, KeyPackage, Signature Key, and RequiredCapabilities have the same meanings as in the MLS protocol [I-D.ietf-mls-protocol].
+
+# BH Notes
+
+Title: PCS in Limited Modes (or something not Guardian)
+  - Might be room to collab with User Trees  
+
+Recommend standards track 
+No use of guardian/edge terminology (anchor is ok)
+
+Stick with Anonymous Guardians; we could do a separate draft for "public guardian". There seems to be less interest in public guardian. 
+
+Choose 4b: Shared Rand, Distinct Signature Keys 
+ OR 
+- Puncturable SOMETHING (PRF) approach: Alice and Bob are going to share randomness. Alice shares update to Group but not to Bob. Alice shares puncturable information to Bob so he can roll key forward. How do we send a message to Bob to have him update the key without an adversary being able to do the same?
+
+The idea that the puncturable *something* can't be replayed.. 
+
+- The shared randomness can be preinstalled or in a secure channel, but we assume the adversary does not compromise this initial establishment. 
+
+- Chnage nomenclature to not have edge or guardian mentions. Use user-tree POV instead (e.g. user device A user device B).
+
+- If Alice and Bob not paired you do a standard KEM update to share the randomness with Bob. If they are paired, you'll have to find a different way (via the puncturable PRF msg) to signal to Bob to update their state. It needs be formatted properly for the DS to handle (check proposal, commit, and update message structure looks for a peer). It needs to look like how a KEM would (i.e. appear random). 
+
+TODO: 
+- MLS Security Impacts - this is a required header 
+- 
+
+
 
 # Introduction
 
@@ -108,11 +155,11 @@ _Shared Randomness_: In order for a guardian to heal an edge that is unable to s
 
 <!--{::boilerplate bcp14-tagged}-->
 
-# Anonymous Guardian
+# Description
 
 An anonymous guardian is when the guardian presence is undetectable by the other group members. Through the edge device and guardian sharing an MLS leaf node, signature key pair, and randomness its communications to the group would appear to be coming from a sole group member instead of a guardian-edge pair to other group members.
 
-Traceability of the Anonymous Guardian is limited to the MLS Authentication Service (AS) and Delivery Service (DS). Depending on the DS design, the edge-guardian pairing could be detected by the (DS) to properly deliver messages. In a broadcast/multicast DS design scheme even the DS would be oblivious to the presence of the guardian. 
+Traceability of the Anonymous Guardian is limited to the MLS Authentication Service (AS) and Delivery Service (DS). Depending on the DS design, the edge-guardian pairing could be detected by the DS to properly deliver messages. In a broadcast/multicast DS design scheme even the DS would be oblivious to the presence of the guardian. 
 
 
 ## Applicable use cases
@@ -126,6 +173,7 @@ The protocol uses default MLS together with a seperate secure 1-1 communication 
 
 
 ## Protocol Restrictions
+How randomness is stored and other assumptions 
 
 ## Ratchet Tree Operations
 
