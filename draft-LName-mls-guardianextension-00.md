@@ -24,7 +24,7 @@ venue:
 
 author:
  -  fullname: Elsie Fondevik 
-    organization: Naval Postgraduate School
+    organization: Kongsberg Defense & Aerospace
     email: elsie.fondevik@kongsberg.com
 -   fullname: Britta Hale
     organization: Naval Postgraduate School
@@ -75,19 +75,21 @@ This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relatin
 1. Terminology
 2. Introduction
 3. Convention and Definitions
-4. Extension Description
-5. IANA Considerations
-   5.1. Guardian MLS Extension Type 
-   5.2. Guardian MLS Anonymous Mode
-   5.2.1. Use Cases
-   5.2.2. Protocol Description 
-   5.2.3. Restrictions
-   5.3. Guardian MLS Public Mode
-   5.3.1 Use Cases
-   5.3.2 Protocol Description
-   5.3.3 Restrictions 
-6. Security Considerations
-7. Normative References 
+4. Protocol Overview (what gets shared with who and how)
+    [Diagrams of what end users see]
+    [Diagram of step-by-step initiation of protocol]
+5. Limited Mode 
+    Anonymous 
+        Security Considerations
+    Public 
+        Security Considerations
+7. Security Considerations 
+    Restrictions for users, storage, and random tape sharing
+8. Extension Requirements to MLS 
+9. IANA Considerations
+10. Acknowledgements 
+10. Normative References 
+
 
 # Terminology
 
@@ -152,32 +154,55 @@ _Shared Randomness_: In order for a guardian to heal an edge that is unable to s
 
 <!--{::boilerplate bcp14-tagged}-->
 
-# Description
+# Protocol Overview 
+[TODO] Add diagrams of how the protocol is initiated and what messages are sent 
+
+
+# Limited Mode
+[TODO] Discuss tradeoffs, general overview of modes, anything that fits both anonymous and public modes 
+
+
+## Anonymous Mode 
 
 An anonymous guardian is when the guardian presence is undetectable by the other group members. Through the edge device and guardian sharing an MLS leaf node, signature key pair, and randomness its communications to the group would appear to be coming from a sole group member instead of a guardian-edge pair to other group members.
 
 Traceability of the Anonymous Guardian is limited to the MLS Authentication Service (AS) and Delivery Service (DS). Depending on the DS design, the edge-guardian pairing could be detected by the DS to properly deliver messages. In a broadcast/multicast DS design scheme even the DS would be oblivious to the presence of the guardian. 
 
 
-## Applicable use cases
+### Security Considerations 
+Restrictions on how things are stored and shared; assumptions made (sharing the random tape is successfully done with no compromises) - how the randomness is shared is up to the user. 
+
+### Applicable use cases
 This mode of application is desirable when group members do not want to explicitly inform all other group members that they are unable to update. 
 
 
-## Protocol Descrition
+### Protocol Overview (?)
 TODO Ref to separete document that conains a thurough design description
 
 The protocol uses default MLS together with a seperate secure 1-1 communication channel. 
 
 
+
+## Public Mode
+
+A public guardian is one that shares an anchor node with the edge but has its own unique signing key. Updates that come from the guardian and edge (when online) will be traceable by other group members. 
+
+Ref fig 4, 6
+Requires altercations to MLS
+
+# Security Considerations 
+## Applicable use cases
+This operational mode is applicable when a user wants to explicitly announce that their edge device is in limited mode. 
+
+## Protocol Overview (?)
+
 ## Protocol Restrictions
-How randomness is stored and other assumptions 
 
-## Ratchet Tree Operations
+# Extension Changes to MLS
 
-### Leaf Node Contents
+## Leaf Node Contents
 
 The MLS leaf node will need to support multiple signature keys for the public guardian. The leaf node content is modified by changing `signature_key` to a vector of `SignaturePublicKey`. 
-
 
     struct {
         HPKEPublicKey encryption_key;
@@ -203,32 +228,31 @@ The MLS leaf node will need to support multiple signature keys for the public gu
     } LeafNode;
 
 
-# Public Guardian
+# Security Considerations
 
-A public guardian is one that shares an anchor node with the edge but has its own unique signing key. Updates that come from the guardian and edge (when online) will be traceable by other group members. 
+# IANA Considerations 
 
-Ref fig 4, 6
-Requires altercations to MLS
 
-## Applicable use cases
-This operational mode is applicable when a user wants to explicitly announce that their edge device is in limited mode. 
 
-## Protocol Description
-TODO Ref to separate document that contains a thorough description
 
-## Protocol Restrictions
-
---- back
-
-# Acknowledgments
-{:numbered="false"}
-
-TODO acknowledge.
-
-# Normative References
+# References
 
 [I-D.ietf-mls-protocol]
 Barnes, R., Beurdouche, B., Robert, R., Millican, J., Omara, E., and K. Cohn-Gordon, "The Messaging Layer Security (MLS) Protocol", Work in Progress, Internet-Draft, draft-ietf-mls-protocol-20, 27 March 2023, <https://datatracker.ietf.org/doc/html/draft-ietf-mls-protocol-20>.
 
-# References 
+
+## Normative References (i.e. RFCs)
 [1] <https://www.rfc-editor.org/info/rfc9420> "MLS RFC"
+[2] <https://www.rfc-editor.org/info/rfc5246> "TLS RFC"
+
+
+## Informational References 
+Our paper 
+
+# Appendices 
+
+
+# Acknowledgments
+{:numbered="false"}
+## Contributors 
+## Authors 
