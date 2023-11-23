@@ -42,7 +42,7 @@ informative:
 --- abstract
 
 # Abstract 
-This document describes the Messaging Layer Security (MLS) Guardian extension that improves security for offline/limited mode user device(s) through using a paired guardian device. Constrained devices that are unable to self-update can be updated by their guardian devices to preserve forward secrecy and post-compromise security through this Guardian Extension. 
+This document describes the Messaging Layer Security (MLS) _____Paired PCS_____ extension that improves Post Compromise Security for devices that are unable to self-update using a trusted paired device. 
 
 # About This Document
 
@@ -75,7 +75,7 @@ This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relatin
 1. Terminology
 2. Introduction
 3. Convention and Definitions
-4. Protocol Overview (what gets shared with who and how)
+4. Extension Overview (what gets shared with who and how)
     [Diagrams of what end users see]
     [Diagram of step-by-step initiation of protocol]
 5. Limited Mode 
@@ -95,7 +95,7 @@ This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relatin
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
 
-The terms MLS client, MLS member, MLS group, Leaf Node, GroupContext, KeyPackage, Signature Key, and RequiredCapabilities have the same meanings as in the MLS protocol [I-D.ietf-mls-protocol].
+The terms MLS client, MLS member, MLS group, Leaf Node, GroupContext, KeyPackage, Signature Key, and RequiredCapabilities have the same meanings as in the [MLS protocol]<https://www.rfc-editor.org/rfc/rfc9420.html>.
 
 # BH Notes
 
@@ -104,8 +104,6 @@ Title: PCS in Limited Modes (or something not Guardian)
 
 Recommend standards track 
 No use of guardian/edge terminology (anchor is ok)
-
-Stick with Anonymous Guardians; we could do a separate draft for "public guardian". There seems to be less interest in public guardian. 
 
 Choose 4b: Shared Rand, Distinct Signature Keys 
  OR 
@@ -120,77 +118,79 @@ The idea that the puncturable *something* can't be replayed..
 - If Alice and Bob not paired you do a standard KEM update to share the randomness with Bob. If they are paired, you'll have to find a different way (via the puncturable PRF msg) to signal to Bob to update their state. It needs be formatted properly for the DS to handle (check proposal, commit, and update message structure looks for a peer). It needs to look like how a KEM would (i.e. appear random). 
 
 TODO: 
-- MLS Security Impacts - this is a required header 
 - 
 
 
 
 # Introduction
 
-Guardianship offers a way for end-users to achieve improved security in constrained settings by allowing a paired trusted device to update security parameters on their behalf. The end-user's trusted device is denoted as the guardian. The guardianship protocol builds upon MLS (see [RFC9420](https://www.rfc-editor.org/info/rfc9420)). While this document makes recommendations for two versions of guardian extensions, interested readers can learn about other cases that were evaluated at https://github.com/emmestl/draft-guardian-protocol.git. #should this be eprint?
+___Paired PCS___ allows a trusted paired device to update the security parameters of an another group member. The trusted paired device can be added to the group or can be another existing group member. The ___Paired PCS___ extension builds upon MLS (see [RFC9420](https://www.rfc-editor.org/info/rfc9420)). While this document makes recommendations for two versions of ___Paired PCS___ extensions, interested readers can learn about other cases that were evaluated at https://eprint.iacr.org/2023/1761. 
 
-The Guardian Protocol (GP) consists of two operational modes, distinguished by the group's general knowledge of guardians: *Anonymous Guardian* and *Public Guardian*. To enable the guardian extension, the MLS leaf node must accomodate being shared by at least two devices, the guardian and edge(s). This means that, depending on the operational mode, the leaf node would also support at least two sets of signature keys. 
+The ___Paired PCS___ extension consists of two operational modes, distinguished by the group's awareness of the pairing: *Anonymous* and *Public* modes based on if the paired device signs on behalf of the partner device or not. To enable the extension, the MLS leaf node must accommodate being shared by at least two devices. This means that, depending on the operational mode, the leaf node would store at least two sets of signature keys. 
 
 # Conventions and Definitions
+MLS leaf node and a paired node 
 
-_Edge Device_: An edge device is an original user equipment device. Such a device may operate in receive-only mode or in another limited fashion such that sending regular keying updates is impractical or even impossible
+Generally, ___Paired PCS___ allows one device perform updates on behalf of another MLS group member. Without loss of generality, we define the one not performing updates as a constrained device and the device performing updates as a paired device. 
 
-_Guardian Device_: The guardian device operates from a secured space with reliable network access. The intent is for the guardian device to be paired with, and provide keying updates on behalf of the edge device. This supports forward secrecy in the event the edge device is compromised. When the edge device is in an active state that allows for it to perform keying updates of its own, the guardian device may be placed in offline mode.
+[TODO: Do we want to keep or remove the extended definitions?] 
+_Constrained Device_: A constrained device is an original user equipment device that is not issuing updates. Such a device may operate in receive-only mode or in another limited fashion such that sending regular keying updates is impractical or even impossible
 
-**TODO: Since we are making a MLS extension, should we stick with just "Leaf Node" instead of "anchor"?**
-_Anchor_:  The MLS leaf node which acts as a shared access point(s) into the underlying group by the guardian and edge device is called an anchor. The anchor is viewed as a group member by the rest of the group and has it's own unique credentials. 
+_Paired Device_: Without loss of generality, the paired device is another user equipment device designated to update on behalf of its partnered constrained device. The paired device's updates decrease the security window for better forward secrecy and enable a constrained device to heal after a compromise for improved post compromise security. 
 
-_Edge Device Operational Modes_
-An edge device has two modes of operation. Before an edge device enters a new state the MLS delivery service (DS), which facilitates group state consensus by ensuring in-order delivery of MLS messages, must be informed. The operational states are:
-* _Online mode_: The edge device is available and running the group protocol as per specification. In this state it does not have need of a guardian.
-* _Limited mode_: The edge device has the ability to receive application messages and key update messages, but it may not preform its own key updates. Depending on environ- mental situation, an edge device may still be allowed to send application messages while in this mode. In this state, a guardian may send updates on behalf of the edge device.
+_Anchor_:  The MLS leaf node which acts as a shared access point into the underlying group by the paired and constrained device is called an anchor.
+
+**[TODO]** BH suggests we don't go into the operational modes so that either device can do updates on behalf of the other at any time. 
+<!-- 
+_Constrained Device Operational Modes_
+An constrained device has two modes of operation. Before an constrained device enters a new state the MLS delivery service (DS), which facilitates group state consensus by ensuring in-order delivery of MLS messages, must be informed. The operational states are:
+* _Online mode_: The constrained device is available and running the group protocol as per specification. In this state it does not have need of a guardian.
+* _Limited mode_: The constrained device has the ability to receive application messages and key update messages, but it may not preform its own key updates. Depending on environ- mental situation, an constrained device may still be allowed to send application messages while in this mode. In this state, a guardian may send updates on behalf of the constrained device.
 
 _Guardian Operational Modes_
-A guardian may be in one of two modes as well, contingent on the mode of the edge.
-* _Offline mode_: When an edge device is online the guardian may be set to be inactive (depending on the guardianship construction).
-* _Online mode_: When the edge device enters limited mode, it becomes reliant on a guardian. Therefore the guardian status must be set to online in order to send key updates.
+A guardian may be in one of two modes as well, contingent on the mode of the constrained.
+* _Offline mode_: When an constrained device is online the guardian may be set to be inactive (depending on the guardianship construction).
+* _Online mode_: When the constrained device enters limited mode, it becomes reliant on a guardian. Therefore the guardian status must be set to online in order to send key updates.
+-->
 
-_Shared Randomness_: In order for a guardian to heal an edge that is unable to self-update, they must share a random tape. Practically, this is accomplished by sharing a seed for random number generation between edge and guardian. This random seed SHOULD/IS RECOMMENDED be shared via secure hardware or it MAY be shared over a secure channel. Readers are encouraged to see [www.link.to.our.paper.com] for security tradeoff analysis. 
+
+_Shared Randomness_: In order for one device to perform cryptographic updates on behalf of another, they must share a random tape. Practically, this is accomplished by sharing a seed for random number generation between the two. This random seed SHOULD/IS RECOMMENDED be shared via secure hardware or it MAY be shared over a secure 1-to-1 channel. Readers are encouraged to see [https://eprint.iacr.org/2023/1761] for security tradeoff analysis. 
 
 <!--{::boilerplate bcp14-tagged}-->
 
-# Protocol Overview 
-[TODO] Add diagrams of how the protocol is initiated and what messages are sent 
+# Extension Execution 
+**[TODO]** Add diagrams of how the protocol is initiated and what messages are sent - use https://asciiflow.com/
 
+Two (or more) devices pair with one another by sharing randomness via a secure out-of-band channel. Once the devices share a random tape, their group key updates are synchronized through the paired device making an update to the MLS group via the anchor node and notifying the constrained device to ratchet it's own key forward. **[TODO]** specify how to use a puncturable PRF to ensure the notification to ratchet the key can't be replayed or forged by an adversary. Since the devices share a random tape, their key derivation function will yield the same pseudorandom keys. 
 
 # Limited Mode
-[TODO] Discuss tradeoffs, general overview of modes, anything that fits both anonymous and public modes 
+**[TODO]** Discuss tradeoffs, general overview of modes, anything that fits both anonymous and public modes 
 
 
 ## Anonymous Mode 
 
-An anonymous guardian is when the guardian presence is undetectable by the other group members. Through the edge device and guardian sharing an MLS leaf node, signature key pair, and randomness its communications to the group would appear to be coming from a sole group member instead of a guardian-edge pair to other group members.
-
-Traceability of the Anonymous Guardian is limited to the MLS Authentication Service (AS) and Delivery Service (DS). Depending on the DS design, the edge-guardian pairing could be detected by the DS to properly deliver messages. In a broadcast/multicast DS design scheme even the DS would be oblivious to the presence of the guardian. 
+In anonymous mode, pairing is undetectable by the other group members. Through sharing a signature key pair, signed messages to the group would appear to be coming from a single group member instead of unique entities. Traceability of the pair is limited to the MLS Authentication Service (AS) and Delivery Service (DS). Depending on the DS design, the pairing could be detected by the DS to properly deliver messages. In a broadcast/multicast DS design scheme even the DS would be oblivious to the presence of the guardian. 
 
 
 ### Security Considerations 
-Restrictions on how things are stored and shared; assumptions made (sharing the random tape is successfully done with no compromises) - how the randomness is shared is up to the user. 
+
+**[TODO]** How to address abuse of anonymity
 
 ### Applicable use cases
 This mode of application is desirable when group members do not want to explicitly inform all other group members that they are unable to update. 
 
 
 ### Protocol Overview (?)
-TODO Ref to separete document that conains a thurough design description
-
-The protocol uses default MLS together with a seperate secure 1-1 communication channel. 
-
 
 
 ## Public Mode
 
-A public guardian is one that shares an anchor node with the edge but has its own unique signing key. Updates that come from the guardian and edge (when online) will be traceable by other group members. 
-
-Ref fig 4, 6
-Requires altercations to MLS
+In public mode, the traceability of the paired device and the constrained device by the rest of the group is possible. Public Mode is distinguished by the use of distinct signature keys by paired devices to issue signed updates to the group. This implies that the anchor leaf node holds a signature key for each of the devices sharing it. 
+ 
 
 # Security Considerations 
+**[TODO]** Unsure of the *unique* security considerations for this... 
+
 ## Applicable use cases
 This operational mode is applicable when a user wants to explicitly announce that their edge device is in limited mode. 
 
@@ -229,11 +229,18 @@ The MLS leaf node will need to support multiple signature keys for the public gu
 
 
 # Security Considerations
+**[TODO]** Restrictions on how things are stored and shared; assumptions made (sharing the random tape is successfully done with no compromises) - how the randomness is shared is up to the user. 
+
+Generally, the security of this extension is based upon the security of the out-of-band channel for sharing randomness and notification messages. 
+
+#### Shared Randomness Establishment
+The security of this extension is based upon the security of the out-of-band channel to used to establish shared randomness. In other words, if an adversary is granted access to the shared randomness, then the MLS group security is broken irrevocably as PCS could never be recovered except via removal. Therefore, we RECOMMEND the shared-randomness be installed via protected hardware in the same way that long-term signing keys stored such that it is infeasible to be accessed by an adversary. The shared-randomness MAY be shared via a secure 1-to-1 channel such as a key encapsulation mechanism between the devices. 
+
+#### Notifications Between Paired Devices
+The notification message sent to the constrained device to forward ratchet its group key must be secured from forgery and replay attacks. If an attacker were able to to prompt either devices to update, then they would fall out-of-sync and be unable to decrypt future group messages. **[TODO]** Recommend sending notifications using the MLS DS or some other out-of-band DS? 
 
 # IANA Considerations 
-
-
-
+**[TODO]** Determine an extension code to use
 
 # References
 
