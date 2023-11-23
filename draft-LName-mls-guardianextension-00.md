@@ -131,7 +131,7 @@ The ___Paired PCS___ extension consists of two operational modes, distinguished 
 # Conventions and Definitions
 MLS leaf node and a paired node 
 
-Generally, ___Paired PCS___ allows one device perform updates on behalf of another MLS group member. Without loss of generality, we define the one not performing updates as a constrained device and the device performing updates as a paired device. 
+Generally, ___Paired PCS___ allows one device to perform updates on behalf of another MLS group member. Without loss of generality, we define the one not performing updates as a constrained device and the device performing updates as a paired device. 
 
 [TODO: Do we want to keep or remove the extended definitions?] 
 _Constrained Device_: A constrained device is an original user equipment device that is not issuing updates. Such a device may operate in receive-only mode or in another limited fashion such that sending regular keying updates is impractical or even impossible
@@ -159,6 +159,24 @@ _Shared Randomness_: In order for one device to perform cryptographic updates on
 <!--{::boilerplate bcp14-tagged}-->
 
 # Extension Execution 
+
+MLS limited mode is introduced as an extension of MLS, as found in [RFC9420], per user, i.e. per MLS leaf node. Meaning that each MLS leaf node itself MAY decide whether it wishes to run the extension. The limited mode extension comes in two flavores, one where all group members are aware that a leaf node uses the extension and one where the usage remaines opaque to the remaining MLS group members.   
+
+Independent of version selected the execution of the extension assumes the existance of a MLS protocol where the device that desires to execute the extension is allready a member, and thus has access to an MLS leaf node. Once an MLS leaf node is paired with a __paired device__ either unit may update on the others behalf. Important; once a device has initiated the use of MLS limited mode, the original MLS commands become oboslete for the specified MLS leaf node, instead the following commands take precidence. 
+
+* enterPCSlimited
+* exitPCSlimited
+* removePair
+* updatePCSlimited
+* toggelUpdateCntrl
+
+Transmitted messages, either between paired devices or to the MLS group, may be one of the following.
+
+
+
+
+
+
 **[TODO]** Add diagrams of how the protocol is initiated and what messages are sent - use https://asciiflow.com/
 
 Two (or more) devices pair with one another by sharing randomness via a secure out-of-band channel. Once the devices share a random tape, their group key updates are synchronized through the paired device making an update to the MLS group via the anchor node and notifying the constrained device to ratchet it's own key forward. **[TODO]** specify how to use a puncturable PRF to ensure the notification to ratchet the key can't be replayed or forged by an adversary. Since the devices share a random tape, their key derivation function will yield the same pseudorandom keys. 
