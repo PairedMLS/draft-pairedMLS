@@ -170,7 +170,12 @@ Independent of version selected the execution of the extension assumes the exist
 * updatePCSlimited
 * toggelUpdateCntrl
 
-Transmitted messages, either between paired devices or to the MLS group, may be one of the following.
+Messages generating by running one of the specified commands are either transmitted between the paried devices or onto the MLS group. The transmitted messages either take the form inherited from MLS or one of the following.
+
+* A _InitatePCS_ message is sent form the original MLS leaf node to its paired device to initiate execution of MLS limited.
+* A _CeasePCS_ message is sent form the original MLS leaf node to its paired device to termiate execution of MLS limited.
+* A _Toggle_ message is sent between paired devices to determine who is resposible for MLS updates.
+* _ACK_ messages are returned by the paired device to signify command has been recieved and accepted.
 
 
 
