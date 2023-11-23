@@ -178,11 +178,32 @@ Messages generating by running one of the specified commands are either transmit
 * _ACK_ messages are returned by the paired device to signify command has been recieved and accepted.
 
 
+## Example Run of the MLS Limited
 
+Device A initates the beggining of the MLS limited extension by informing future pairing device B as well as the DS of a comming pairing. The paired device B will also inform the DS that it is ready to run the protocol.
+
+                                                 Group
+A                 B            Directory         Channel
+|   Initiate PCS  |                 |              |
++----------------->                 |              |
+|                 |                 |              |
+|           Initiate PCS            |              |
++-----------------+----------------->              |
+|                 |                 |              |
+|                 |   Initiate PCS  |              |
+|                 +----------------->              |
+|                 |                 |              |
+|                 |                 |              |
+
+
+
+**[TODO]** Continue example run. A updates, group updates, A toggles, B updates, B ceases limited mode, group updates.
 
 
 
 **[TODO]** Add diagrams of how the protocol is initiated and what messages are sent - use https://asciiflow.com/
+
+## Shared Random Tape
 
 Two (or more) devices pair with one another by sharing randomness via a secure out-of-band channel. Once the devices share a random tape, their group key updates are synchronized through the paired device making an update to the MLS group via the anchor node and notifying the constrained device to ratchet it's own key forward. **[TODO]** specify how to use a puncturable PRF to ensure the notification to ratchet the key can't be replayed or forged by an adversary. Since the devices share a random tape, their key derivation function will yield the same pseudorandom keys. 
 
