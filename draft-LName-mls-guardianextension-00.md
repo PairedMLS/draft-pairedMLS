@@ -182,8 +182,6 @@ Messages generating by running one of the specified commands are either transmit
 
 Device A initates the beggining of the MLS limited extension by informing future pairing device B as well as the DS of a comming pairing. The paired device B will also inform the DS that it is ready to run the protocol. After the DS has been informed by both initiator and its paired device an accept reply is returned to both devices (see Figure 1). 
 
-![Drag racing](
-
                                                  Group
 A                 B            Directory         Channel
 | Inititate PCS(B)|                 |              |
@@ -201,7 +199,30 @@ A                 B            Directory         Channel
 |        Initiate PCS(B)            |              |
 <-----------------+-----------------+              |
 |                 |                 |              |
-)
+**Figure 1** A is an MLS group member that wishes to pair with device B.
+
+
+
+                                                                Group
+A            B              G1  ...    Gn         Directory     Channel
+|Update(A)   |              |          |              |           |
++------------+--------------+----------+--------------+----------->
+|            |              |          |              |           |
+|            |              |          |              |  Update(A)|
+<------------+--------------+----------+--------------+-----------+
+|            |              <----------+--------------+-----------+
+|            |              |          |              |           |
+|            |              |          <--------------+-----------+
+|            |              |          |              |           |
+|            |              |          |              |           |
+|            |              |          |              |           |
+|            |              |          |              |           |
+|            |              |          |              |           |
+|            |              |          |              |           |
+|            |              |          |              |           |
+|            |              |          |              |           |
+|            |              |          |              |           |
+|            |              |          |              |           |
 
 
 
