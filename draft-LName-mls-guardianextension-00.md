@@ -279,6 +279,8 @@ A            B              G1  ...    Gn         Directory     Channel
 |            |              |          |              |           |
 
 
+MLS commands such as Remove, GroupInfo KeyPackage and Welcome take the form and are processed as according to RFC9420. 
+
 **[TODO]** Add diagrams of how the protocol is initiated and what messages are sent - use https://asciiflow.com/
 
 ## Shared Random Tape
