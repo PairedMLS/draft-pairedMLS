@@ -42,7 +42,7 @@ informative:
 --- abstract
 
 # Abstract 
-This document describes the Messaging Layer Security (MLS) _____Paired PCS_____ extension that improves Post Compromise Security for devices that are unable to self-update using a trusted paired device. 
+This document describes the Paired Messaging Layer Security (MLS) extension that improves Post Compromise Security for devices that are unable to self-update using a trusted paired device. 
 
 # About This Document
 
@@ -78,7 +78,7 @@ This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relatin
 4. Extension Overview (what gets shared with who and how)
     [Diagrams of what end users see]
     [Diagram of step-by-step initiation of protocol]
-5. Limited Mode 
+5. Paired MLS Mode 
     Anonymous 
         Security Considerations
     Public 
@@ -95,8 +95,33 @@ This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relatin
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
 
-The terms MLS client, MLS member, MLS group, Leaf Node, GroupContext, KeyPackage, Signature Key, and RequiredCapabilities have the same meanings as in the [MLS protocol]<https://www.rfc-editor.org/rfc/rfc9420.html>.
+The terms MLS client, MLS member, MLS group, Leaf Node, GroupContext, KeyPackage, Signature Key, Handshake Message, Private Message, Public Message, and RequiredCapabilities have the same meanings as in the [MLS protocol]<https://www.rfc-editor.org/rfc/rfc9420.html>.
 
+Generally, ___Paired MLS___ allows one active device to perform updates on behalf of another passive MLS group member. Without loss of generality, we define the one not performing updates as a passive device and the device performing updates as the active device. 
+
+_Passive Device_: A passive device is an original user equipment device that is not issuing updates. Such a device may operate in receive-only mode or in another limited fashion such that sending regular keying updates is impractical or even impossible. 
+
+_Active Device_: Without loss of generality, the active device is another user equipment device designated to update on behalf of its paired passive device(s). The active device's updates enable a passive device to heal after a compromise for improved post compromise security. 
+
+_Anchor_:  The MLS node which acts as a shared access point into the underlying group by the paired and passive device is called an anchor. The anchor can be a leaf node of an individual group member shared by his/her paired devices or a common intermediate node on the path to the root of a of multiple paired group members. 
+
+<!-- 
+_passive Device Operational Modes_
+An passive device has two modes of operation. Before an passive device enters a new state the MLS delivery service (DS), which facilitates group state consensus by ensuring in-order delivery of MLS messages, must be informed. The operational states are:
+* _Online mode_: The passive device is available and running the group protocol as per specification. In this state it does not have need of a active device.
+* _Limited mode_: The passive device has the ability to receive application messages and key update messages, but it may not preform its own key updates. Depending on environ- mental situation, an passive device may still be allowed to send application messages while in this mode. In this state, the active device may send updates on behalf of the passive device.
+
+_Active Operational Modes_
+The active device may be in one of two modes as well, contingent on the mode of the passive.
+* _Offline mode_: When an passive device is online the active device may be set to be inactive.
+* _Online mode_: When the passive device enters limited mode, it becomes reliant on a active device. Therefore the active device status must be set to online in order to send key updates.
+-->
+
+_Shared Randomness_: In order for one device to perform cryptographic updates on behalf of another, they must share a random tape. Practically, this is accomplished by sharing a seed for random number generation between the two. This random seed SHOULD/IS RECOMMENDED be shared via secure hardware or it MAY be shared over a secure 1-to-1 channel. Readers are encouraged to see [https://eprint.iacr.org/2023/1761] for security tradeoff analysis. 
+
+<!--{::boilerplate bcp14-tagged}-->
+
+<!--
 # BH Notes
 
 Title: PCS in Limited Modes (or something not Guardian)
@@ -119,106 +144,92 @@ The idea that the puncturable *something* can't be replayed..
 
 TODO: 
 - 
-
+-->
 
 
 # Introduction
 
-___Paired PCS___ allows a trusted paired device to update the security parameters of an another group member. The trusted paired device can be added to the group or can be another existing group member. The ___Paired PCS___ extension builds upon MLS (see [RFC9420](https://www.rfc-editor.org/info/rfc9420)). While this document makes recommendations for two versions of ___Paired PCS___ extensions, interested readers can learn about other cases that were evaluated at https://eprint.iacr.org/2023/1761. 
+___Paired MLS___ allows a trusted device to update the security parameters of an another group member. The trusted paired device can be added to the group or can be another existing group member. The ___Paired MLS___ extension builds upon MLS (see [RFC9420](https://www.rfc-editor.org/info/rfc9420)). While this document makes recommendations for two versions of ___Paired MLS___ extensions, interested readers can learn about other cases that were evaluated at https://eprint.iacr.org/2023/1761. 
 
-The ___Paired PCS___ extension consists of two operational modes, distinguished by the group's awareness of the pairing: *Anonymous* and *Public* modes based on if the paired device signs on behalf of the partner device or not. To enable the extension, the MLS leaf node must accommodate being shared by at least two devices. This means that, depending on the operational mode, the leaf node would store at least two sets of signature keys. 
-
-# Conventions and Definitions
-
-Generally, ___Paired PCS___ allows one device to perform updates on behalf of another MLS group member. Without loss of generality, we define the one not performing updates as a constrained device and the device performing updates as a paired device. 
-
-[TODO: Do we want to keep or remove the extended definitions?] 
-_Constrained Device_: A constrained device is an original user equipment device that is not issuing updates. Such a device may operate in receive-only mode or in another limited fashion such that sending regular keying updates is impractical or even impossible
-
-_Paired Device_: Without loss of generality, the paired device is another user equipment device designated to update on behalf of its partnered constrained device. The paired device's updates decrease the security window for better forward secrecy and enable a constrained device to heal after a compromise for improved post compromise security. 
-
-_Anchor_:  The MLS leaf node which acts as a shared access point into the underlying group by the paired and constrained device is called an anchor.
-
-**[TODO]** BH suggests we don't go into the operational modes so that either device can do updates on behalf of the other at any time. 
-<!-- 
-_Constrained Device Operational Modes_
-An constrained device has two modes of operation. Before an constrained device enters a new state the MLS delivery service (DS), which facilitates group state consensus by ensuring in-order delivery of MLS messages, must be informed. The operational states are:
-* _Online mode_: The constrained device is available and running the group protocol as per specification. In this state it does not have need of a guardian.
-* _Limited mode_: The constrained device has the ability to receive application messages and key update messages, but it may not preform its own key updates. Depending on environ- mental situation, an constrained device may still be allowed to send application messages while in this mode. In this state, a guardian may send updates on behalf of the constrained device.
-
-_Guardian Operational Modes_
-A guardian may be in one of two modes as well, contingent on the mode of the constrained.
-* _Offline mode_: When an constrained device is online the guardian may be set to be inactive (depending on the guardianship construction).
-* _Online mode_: When the constrained device enters limited mode, it becomes reliant on a guardian. Therefore the guardian status must be set to online in order to send key updates.
--->
-
-
-_Shared Randomness_: In order for one device to perform cryptographic updates on behalf of another, they must share a random tape. Practically, this is accomplished by sharing a seed for random number generation between the two. This random seed SHOULD/IS RECOMMENDED be shared via secure hardware or it MAY be shared over a secure 1-to-1 channel. Readers are encouraged to see [https://eprint.iacr.org/2023/1761] for security tradeoff analysis. 
-
-<!--{::boilerplate bcp14-tagged}-->
+The ___Paired MLS___ extension consists of two operational modes, distinguished by the group's awareness of the pairing: *Anonymous* and *Public* modes based on if the paired device signs on behalf of the partner device or not. To enable the extension, the MLS leaf node must accommodate being shared by at least two devices. This means that, depending on the operational mode, the leaf node would store at least two sets of signature keys. 
 
 # Extension Execution 
 
-MLS limited mode is introduced as an extension of MLS, as found in [RFC9420], per user, i.e. per MLS leaf node. Meaning that each MLS leaf node itself MAY decide whether it wishes to run the extension. The limited mode extension comes in two variants, one where all group members are aware that a leaf node uses the extension and one where the usage remaines opaque to the remaining MLS group members.   
+Paired MLS is an extension of MLS, as found in [RFC9420], per user, i.e. per MLS leaf node. Meaning that each MLS leaf node itself MAY decide whether it wishes to run the extension. This extension comes in two variantions, one where all group members are aware that an MLS node uses the extension and one where the usage is opaque to the remaining MLS group members.   
 
-Independent of version selected the execution of the extension assumes the existence of a MLS protocol where the device that desires to execute the extension is already a member, and thus has access to an MLS leaf node. Once an MLS leaf node is linked to a __paired device__ either unit may update on the other's behalf. Important; once a device has initiated the use of MLS limited mode, the original MLS commands become obsolete for the specified MLS leaf node, instead the following commands take precedence. 
+Independent of version selected the execution of the extension assumes the existence of a MLS protocol where the device that desires to execute the extension is already a member, and thus has access to an MLS leaf node. The group member initiating this extension must first negociate the shared randomness with another device: this SHOULD be done via secure hardware and MAY be done through a secure one-to-one channel. [**TODO specify details of this negociation - use Handshake Messages with DS or with an out-of-band chanel?]**
 
-* enterPCSlimited
-* exitPCSlimited
+After the shared randomness is established, the devices are "paired" and either device may update on the other's behalf. When the active device issues an update to the group on behalf of the passive device it will also issue a notification to the passive device to ratchet forward its group key. This ensures the passive device can still process updates and commits made by other group members. The notification message MUST be formatted as a MLS Public Message to the paired devices group. **[TODO: Private Message vs Public Message for notification]**
+
+Important; once a device has initiated the use of Paired MLS mode, the original MLS commands become obsolete for the specified MLS leaf node, instead the following commands take precedence. 
+
+* enterPairing
+* exitPairing
 * removePair
-* updatePCSlimited
-* toggelUpdateCntrl
+* updatePairing
 
 Messages generated by running one of the specified commands are either transmitted between the paired devices or onto the MLS group. The transmitted messages either take the form inherited from MLS or one of the following.
 
-* A _InitiatePCS_ message is sent form the original MLS leaf node to its paired device to initiate execution of MLS limited.
-* A _CeasePCS_ message is sent form the original MLS leaf node to its paired device to terminate execution of MLS limited.
-* A _Toggle_ message is sent between paired devices to determine who is resposible for MLS updates.
+* A _InitiatePCS_ message is sent form the original MLS leaf node to its paired device to initiate execution of Paired MLS.
+* A _CeasePCS_ message is sent form the original MLS leaf node to its paired device to terminate execution of Paired MLS.
+<!-- * A _Toggle_ message is sent between paired devices to determine who is resposible for MLS updates. -->
 * _ACK_ messages are returned by the paired device to signify command has been recieved and accepted. __[ESM Notes]__ dont think this is needed.
 
-----------
+<!----------
 __[XT Notes]__
-* It's unclear to me what the difference between the commands and the messages:  _InitiatePCS_ and _enterPCSLimited_; _CeasePCS_ and _exitPCSlimited_; and _toggleUpdateCntrl_ and _Toggle_. 
+* It's unclear to me what the difference between the commands and the messages:  _InitiatePCS_ and _enterPairing_; _CeasePCS_ and _exitPairing_; and _toggleUpdateCntrl_ and _Toggle_. 
 * Limited Mode is a use case of our extension, and should not be the name. Maybe we can call it "Paired MLS" or "MLS Paired PCS": we need a name that captures the essence of Guardianship and that stands on it's own to let a reader intuitively understand what it does... "user branches"? haha
------------
+----------->
 
-## Example Run of the MLS Limited
+## Example Run of Paired MLS
 
-Device A initiates the beginning of the MLS limited extension by informing future pairing device B as well as the DS of a coming pairing. The paired device B will also inform the DS that it is ready to run the protocol. After the DS has been informed by both initiator and its paired device an accept reply is returned to both devices (see Figure 1). 
+### Negotiate Randomness 
+The following is an example of using a one-time secure channel to establish shared randomness. Device A initiates the beginning of the Paired MLS extension by informing future pairing device B as well as the DS of a coming pairing. The paired device B will also inform the DS that it is ready to run the protocol. After the DS has been informed by both initiator and its paired device an accept reply is returned to both devices (see Figure 1). 
 
                                                  Group
 A                 B            Directory         Channel
-| Inititate PCS(B)|                 |              |
+| NegociateRand(B)|                 |              |
 +----------------->                 |              |
 |                 |                 |              |
-|         Initiate|PCS(B)           |              |
+|        Negociate|Rand(B)          |              |
 +-----------------+----------------->              |
 |                 |                 |              |
-|                 | InitiatetPCS(B) |              |
+|                 | NegociateRand(B)|              |
 |                 +----------------->              |
 |                 |                 |              |
-|                 | Initiate PCS(B) |              |
+|                 | NegociateRand(B)|              |
 |                 <-----------------+              |
 |                 |                 |              |
-|        Initiate PCS(B)            |              |
+|        NegociateRand(B)           |              |
 <-----------------+-----------------+              |
 |                 |                 |              |
-**Figure 1** A is an MLS group member that wishes to pair with device B.
+**Figure 1b** A is an MLS group member that wishes to pair with device B using the existing MLS infrastructure.
 
-Once A and B have been paired A can issue an update. Into the MLS group it issues the update as normal. Additional infromation, conserning randomness, is transmitted directley to B. From the regular MLS group members this update will not be destinguishable from any other MLS update preformed by A. The DS however has the additional task of informing B of the requested update, and if accepted, the acctual update. 
+                                                 Group
+A                 B            Directory         Channel
+| NegociateRand(B)|                 |              |
++----------------->                 |              |
+|                 |                 |              |
+| NegociateRand(B)|                 |              |
+<-----------------+                 |              |
+|                 |                 |              |
+**Figure 1b** A is an MLS group member that wishes to pair with device B using a  one-to-one channel. 
+
+Once A and B have been paired A can issue an update on behalf of B. Into the MLS group it issues the update as normal. The nofitication message is directly transmitted directley to B. From the regular MLS group members this update will not be destinguishable from any other MLS update preformed by A. The DS however has the additional task of informing B of the requested update, and if accepted, the acctual update. 
 
                                                                 Group
 A            B              G1  ...    Gn         Directory     Channel
-|Update(A)   |              |          |              |           |
+|Update(B)   |              |          |              |           |
 +------------+--------------+----------+--------------+----------->
-|Update(A)   |              |          |              |           |
-+------------>
-|            |              |          |              |Update(A)  |
+|Notify(B)   |              |          |              |           |
++------------+--------------+----------+--------------+----------->
+|            |              |          |              |Notify(B)  |
+|            <--------------+----------+--------------+-----------+
+|            |              |          |              |Update(B)  |
 <------------+--------------+----------+--------------+-----------+
 |            |              <----------+--------------+-----------+
 |            |              |          |              |           |
 |            |              |          <--------------+-----------+
-|            <--------------+----------+--------------+           |
 |            |              |          |              |           |
 |            |              |          |              |           |
 |            |              |Commit(up)|              |           |
@@ -234,36 +245,16 @@ A            B              G1  ...    Gn         Directory     Channel
 |            <--------------+----------+--------------+           |
 |            |              |          |              |           |
 |            |              |          |              |           |
-|            |              |          |              |           |
-|            |              |          |              |           |
-**Figure 2** Paired devices A and B when A prefoms an update. Remaining MLS group members are labeled G1, ..., Gn.
+
+**Figure 2** Paired devices A and B when A prefoms an update on behalf of B. Remaining MLS group members are labeled G1, ..., Gn.
 
 Similarilty if A is the current main device and any other MLS group member updates the process will follow the flow as defined in RFC9420 with the additional step of DS informing B as well. If the network used is a multicast or broadcast setting, the addional step is not needed. 
-
+<!--
 When at some point A has to enter limited mode, i.e. will no longer be able to issue updates, B will need to be informed that it needs to take charge and become the new main device. This command does not affect the MLS group and only occurs as direct communication between A and B as well as informing the DS of a change in main device.
 
-                                                 Group
-A                 B            Directory         Channel
-| Toggle          |                 |              |
-+----------------->                 |              |
-|                 |                 |              |
-|         Toggle  |                 |              |
-+-----------------+----------------->              |
-|                 |                 |              |
-|                 | Toggle          |              |
-|                 +----------------->              |
-|                 |                 |              |
-|                 | Toggle          |              |
-|                 <-----------------+              |
-|                 |                 |              |
-|        Toggle   |                 |              |
-<-----------------+-----------------+              |
-|                 |                 |              |
-**Figure 3** A informs B that it will be go into limited mode and B will take over as new main device.
+Now that B is the new main device it is in charge of updating the MLS leaf node. The updates issued by B is dones similarily as the update preformed by A as seen in, **Figure 2**. -->
 
-Now that B is the new main device it is in charge of updating the MLS leaf node. The updates issued by B is dones similarily as the update preformed by A as seen in, **Figure 2**.
-
-To end MLS PCS limited mode extenision either A or B may issue an _CeasePCS_ command. This will remove the both devices form MLS group and will in priniple function as a self remove, this is a change required from MLS according to RFC9420. In the case of the example A is the one issuing the removal.
+To end MLS Paired mode extenision either A or B may issue an _CeasePCS_ command. This will remove the both devices form MLS group and will in priniple function as a self remove, this is a change required from MLS according to RFC9420. In the case of the example A is the one issuing the removal.
 
                                                                 Group
 A            B              G1  ...    Gn         Directory     Channel
@@ -281,20 +272,19 @@ A            B              G1  ...    Gn         Directory     Channel
 
 MLS commands such as Remove, GroupInfo KeyPackage and Welcome take the form and are processed as according to RFC9420. 
 
-**[TODO]** Add diagrams of how the protocol is initiated and what messages are sent - use https://asciiflow.com/
+<!--**[TODO]** Add diagrams of how the protocol is initiated and what messages are sent - use https://asciiflow.com/-->
 
 ## Shared Random Tape
 
-Two (or more) devices pair with one another by sharing randomness via a secure out-of-band channel. Once the devices share a random tape, their group key updates are synchronized through the paired device making an update to the MLS group via the anchor node and notifying the constrained device to ratchet it's own key forward. **[TODO]** specify how to use a puncturable PRF to ensure the notification to ratchet the key can't be replayed or forged by an adversary. Since the devices share a random tape, their key derivation function will yield the same pseudorandom keys. 
+Two (or more) devices pair with one another by sharing randomness via a secure out-of-band channel. Once the devices share a random tape, their group key updates are synchronized through the paired device making an update to the MLS group via the anchor node and notifying the passive device to ratchet it's own key forward. **[TODO]** specify how to use a puncturable PRF to ensure the notification to ratchet the key can't be replayed or forged by an adversary. Since the devices share a random tape, their key derivation function will yield the same pseudorandom keys. 
 
-# Limited Mode
-**[TODO]** Discuss tradeoffs, general overview of modes, anything that fits both anonymous and public modes 
+# Paired MLS Modes
 
+## Hidden Mode 
 
-## Anonymous Mode 
+In hidden mode, pairing is undetectable by the other group members. Through sharing a signature key pair, signed messages to the group would appear to be coming from a single group member instead of unique entities. Traceability of the pair is limited to the MLS Authentication Service (AS) and Delivery Service (DS). Depending on the DS design, the pairing could be detected by the DS to properly deliver messages. In a broadcast/multicast DS design scheme even the DS would be oblivious to the presence of the guardian. 
 
-In anonymous mode, pairing is undetectable by the other group members. Through sharing a signature key pair, signed messages to the group would appear to be coming from a single group member instead of unique entities. Traceability of the pair is limited to the MLS Authentication Service (AS) and Delivery Service (DS). Depending on the DS design, the pairing could be detected by the DS to properly deliver messages. In a broadcast/multicast DS design scheme even the DS would be oblivious to the presence of the guardian. 
-
+The ramifications of this Hidden mode include ghost devices that could bypass the AS and DS in joining and participating in a group masquerading as its paired device. Moreover, if one paired device is compromised, then all devices will need to be revoked from the MLS group to regain group security. This is easily done by simply pruning the anchor node shared by the paired members from the ratchet tree. 
 
 ### Security Considerations 
 
@@ -311,14 +301,14 @@ This mode of application is desirable when group members do not want to explicit
 
 ## Public Mode
 
-In public mode, the traceability of the paired device and the constrained device by the rest of the group is possible. Public Mode is distinguished by the use of distinct signature keys by paired devices to issue signed updates to the group. This implies that the anchor leaf node holds a signature key for each of the devices sharing it. 
+In public mode, the traceability of the paired device and the passive device by the rest of the group is possible. Public Mode is distinguished by the use of distinct signature keys by paired devices to issue signed updates to the group. This implies that the anchor leaf node holds a signature key for each of the devices sharing it. 
  
 
 # Security Considerations 
 **[TODO]** Unsure of the *unique* security considerations for this... 
 
 ## Applicable use cases
-This operational mode is applicable when a user wants to explicitly announce that their edge device is in limited mode. 
+This operational mode is applicable when a user wants to explicitly announce that their passive device is in a limited receive-only mode. 
 
 ## Protocol Overview (?)
 
@@ -364,7 +354,7 @@ Generally, the security of this extension is based upon the security of the out-
 The security of this extension is based upon the security of the out-of-band channel to used to establish shared randomness. In other words, if an adversary is granted access to the shared randomness, then the MLS group security is broken irrevocably as PCS could never be recovered except via removal. Therefore, we RECOMMEND the shared-randomness be installed via protected hardware in the same way that long-term signing keys stored such that it is infeasible to be accessed by an adversary. The shared-randomness MAY be shared via a secure 1-to-1 channel such as a key encapsulation mechanism between the devices. 
 
 #### Notifications Between Paired Devices
-The notification message sent to the constrained device to forward ratchet its group key must be secured from forgery and replay attacks. If an attacker were able to to prompt either devices to update, then they would fall out-of-sync and be unable to decrypt future group messages. **[TODO]** Recommend sending notifications using the MLS DS or some other out-of-band DS? 
+The notification message sent to the passive device to forward ratchet its group key must be secured from forgery and replay attacks. If an attacker were able to to prompt either devices to update, then they would fall out-of-sync and be unable to decrypt future group messages. **[TODO]** Recommend sending notifications using the MLS DS or some other out-of-band DS? 
 
 # IANA Considerations 
 **[TODO]** Determine an extension code to use
