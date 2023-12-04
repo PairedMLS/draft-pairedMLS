@@ -274,41 +274,30 @@ MLS commands such as Remove, GroupInfo KeyPackage and Welcome take the form and 
 
 Two (or more) devices pair with one another by sharing randomness via a secure out-of-band channel. Once the devices share a random tape, their group key updates are synchronized through the paired device making an update to the MLS group via the anchor node and notifying the passive device to ratchet it's own key forward. **[TODO]** specify how to use a puncturable PRF to ensure the notification to ratchet the key can't be replayed or forged by an adversary. Since the devices share a random tape, their key derivation function will yield the same pseudorandom keys. 
 
-# Paired MLS Modes
+# Security Considerations
+**[TODO]** Restrictions on how things are stored and shared; assumptions made (sharing the random tape is successfully done with no compromises) - how the randomness is shared is up to the user. 
 
-## Hidden Mode 
-
-In hidden mode, pairing is undetectable by the other group members. Through sharing a signature key pair, signed messages to the group would appear to be coming from a single group member instead of unique entities. Traceability of the pair is limited to the MLS Authentication Service (AS) and Delivery Service (DS). Depending on the DS design, the pairing could be detected by the DS to properly deliver messages. In a broadcast/multicast DS design scheme even the DS would be oblivious to the presence of the guardian. 
-
-The ramifications of this Hidden mode include ghost devices that could bypass the AS and DS in joining and participating in a group masquerading as its paired device. Moreover, if one paired device is compromised, then all devices will need to be revoked from the MLS group to regain group security. This is easily done by simply pruning the anchor node shared by the paired members from the ratchet tree. 
-
-### Security Considerations 
-
-**[TODO]** How to address abuse of anonymity
+Generally, the security of this extension is based upon the security of the out-of-band channel for sharing randomness and notification messages. 
+<!--If the shared randomness is obtained by the adversary, then the only way to regain PCS is to remove the leaf node used to anchor the devices from the group. -->
 
 Without the ability to interrogate the delivery service for anonymous pairings, compromised or malicious paired devices may eavesdrop undetected. If a group key is leaked somehow, PCS can be achieved through an update by either of the paired devices. However, if the shared randomness is compromised on one device, then both devices are irrevocably compromised as the attacker could generate new secrets used to generate group keys. 
+
+the traceability of the paired device and the passive device by the rest of the group is possible. Public Mode is distinguished by the use of distinct signature keys by paired devices to issue signed updates to the group. This implies that the anchor leaf node holds a signature key for each of the devices sharing it. 
 
 ### Applicable use cases
 This mode of application is desirable when group members do not want to explicitly inform all other group members that they are unable to update. 
 
 
-### Protocol Overview (?)
+## Hidden Mode 
+**[TODO]** How to address abuse of anonymity
+In hidden mode, pairing is undetectable by the other group members. Through sharing a signature key pair, signed messages to the group would appear to be coming from a single group member instead of unique entities. Traceability of the pair is limited to the MLS Authentication Service (AS) and Delivery Service (DS). Depending on the DS design, the pairing could be detected by the DS to properly deliver messages. In a broadcast/multicast DS design scheme even the DS would be oblivious to the presence of the guardian. 
+
+The ramifications of this Hidden mode include ghost devices that could bypass the AS and DS in joining and participating in a group masquerading as its paired device. Moreover, if one paired device is compromised, then all devices will need to be revoked from the MLS group to regain group security. This is easily done by simply pruning the anchor node shared by the paired members from the ratchet tree. 
 
 
-## Public Mode
-
-In public mode, the traceability of the paired device and the passive device by the rest of the group is possible. Public Mode is distinguished by the use of distinct signature keys by paired devices to issue signed updates to the group. This implies that the anchor leaf node holds a signature key for each of the devices sharing it. 
- 
-
-# Security Considerations 
-**[TODO]** Unsure of the *unique* security considerations for this... 
-
-## Applicable use cases
+### Applicable use cases
 This operational mode is applicable when a user wants to explicitly announce that their passive device is in a limited receive-only mode. 
 
-## Protocol Overview (?)
-
-## Protocol Restrictions
 
 # Extension Changes to MLS
 
@@ -340,11 +329,6 @@ The MLS leaf node will need to support multiple signature keys for the public gu
     } LeafNode;
 
 
-# Security Considerations
-**[TODO]** Restrictions on how things are stored and shared; assumptions made (sharing the random tape is successfully done with no compromises) - how the randomness is shared is up to the user. 
-
-Generally, the security of this extension is based upon the security of the out-of-band channel for sharing randomness and notification messages. 
-<!--If the shared randomness is obtained by the adversary, then the only way to regain PCS is to remove the leaf node used to anchor the devices from the group. -->
 
 #### Shared Randomness Establishment
 The security of this extension is based upon the security of the out-of-band channel to used to establish shared randomness. In other words, if an adversary is granted access to the shared randomness, then the MLS group security is broken irrevocably as PCS could never be recovered except via removal. Therefore, we RECOMMEND the shared-randomness be installed via protected hardware in the same way that long-term signing keys stored such that it is infeasible to be accessed by an adversary. The shared-randomness MAY be shared via a secure 1-to-1 channel such as a key encapsulation mechanism between the devices. 
