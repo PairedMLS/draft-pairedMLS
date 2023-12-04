@@ -78,17 +78,13 @@ This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relatin
 4. Extension Overview (what gets shared with who and how)
     [Diagrams of what end users see]
     [Diagram of step-by-step initiation of protocol]
-5. Paired MLS Mode 
-    Anonymous 
-        Security Considerations
-    Public 
-        Security Considerations
-7. Security Considerations 
+5. Security Considerations 
     Restrictions for users, storage, and random tape sharing
-8. Extension Requirements to MLS 
-9. IANA Considerations
-10. Acknowledgements 
-10. Normative References 
+    Anonymous Mode
+6. Extension Requirements to MLS 
+7. IANA Considerations
+8. Acknowledgements 
+9. Normative References 
 
 
 # Terminology
