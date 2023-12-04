@@ -91,15 +91,17 @@ This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relatin
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
 
-The terms MLS client, MLS member, MLS group, Leaf Node, GroupContext, KeyPackage, Signature Key, Handshake Message, Private Message, Public Message, and RequiredCapabilities have the same meanings as in the [MLS protocol]<https://www.rfc-editor.org/rfc/rfc9420.html>.
+The terms MLS client, MLS member, MLS group, Leaf Node, GroupContext, KeyPackage, Signature Key, Handshake Message, Private Message, Public Message, and RequiredCapabilities have the same meanings as in the [MLS protocol] <https://www.rfc-editor.org/rfc/rfc9420.html>.
 
-Generally, ___Paired MLS___ allows one active device to perform updates on behalf of another passive MLS group member. Without loss of generality, we define the one not performing updates as a passive device and the device performing updates as the active device. 
+Generally, ___Paired MLS___ involves two paired devices, where one device can perform PCS updates in an MLS group on behalf of the other device. Without loss of generality, we define the one performing updates as the active device and the device not performing the update as the passive device:
 
-_Passive Device_: A passive device is an original user equipment device that is not issuing updates. Such a device may operate in receive-only mode or in another limited fashion such that sending regular keying updates is impractical or even impossible. 
+_Passive Device_: A passive device is an original user equipment device that is not issuing updates. Such a device may operate in receive-only mode or in another limited fashion such that sending regular keying updates is impractical or even impossible. A passive device may be offline or online, i.e., if the passive device is online it can receive application and group management messages, but is restricted from issuing updates.
 
-_Active Device_: Without loss of generality, the active device is another user equipment device designated to update on behalf of its paired passive device(s). The active device's updates enable a passive device to heal after a compromise for improved post compromise security. 
+_Active Device_: An active device is another user equipment device designated to update on behalf of its paired passive device. The active device's updates enable a passive device to PCS heal after a compromise for improved post-compromise security. 
 
-_Anchor_:  The MLS node which acts as a shared access point into the underlying group by the paired and passive device is called an anchor. The anchor can be a leaf node of an individual group member shared by his/her paired devices or a common intermediate node on the path to the root of a of multiple paired group members. 
+Paired devices may switch roles between active and passive. Also a device may be paired with multiple others, such that it can issue updates on behalf of several paired passive devices.
+
+_Anchor_:  The MLS node that acts as a shared access node between the paired and passive device is called an anchor. The anchor can be a leaf node of a group member, where the paired devices both have access to the leaf node information but our nominally outside of the MLS tree. The anchor can also be a shared intermediate node on the path to the root of an MLS tree, and as such the the anchor may be shared with multiple only MLS members in addition to the paired devices. 
 
 <!-- 
 _passive Device Operational Modes_
@@ -113,7 +115,8 @@ The active device may be in one of two modes as well, contingent on the mode of 
 * _Online mode_: When the passive device enters limited mode, it becomes reliant on a active device. Therefore the active device status must be set to online in order to send key updates.
 -->
 
-_Shared Randomness_: In order for one device to perform cryptographic updates on behalf of another, they must share a random tape. Practically, this is accomplished by sharing a seed for random number generation between the two. This random seed SHOULD/IS RECOMMENDED be shared via secure hardware or it MAY be shared over a secure 1-to-1 channel. Readers are encouraged to see [https://eprint.iacr.org/2023/1761] for security tradeoff analysis. 
+_Shared Randomness_: In order for one device to perform cryptographic updates on behalf of another, they must share a source of randomness that is kept in secure storage. This is in addition to each of the devices' own randomness source. In cryptographic analysis terms, such shared randomness must be stored with similar protections as signature keys in order to not be assumed as compromised in the event of other state compromise. Practically, this is accomplished by sharing a seed for pseudorandom number generation between the two. This random seed IS RECOMMENDED be shared via secure hardware or sharing MAY be bootstrapped over a 1-to-1 channel, where the added MLS PCS guarantees from this draft are contingent on the security of the 1-to-1 channel. 
+Readers are encouraged to see [FHX23] for security tradeoff analysis. 
 
 <!--{::boilerplate bcp14-tagged}-->
 
@@ -351,7 +354,7 @@ Barnes, R., Beurdouche, B., Robert, R., Millican, J., Omara, E., and K. Cohn-Gor
 
 
 ## Informational References 
-[3] E. M. Fondevik, B. Hale, and X. Tian. "Guardianship in Group Key Exchange for Limited Environments". Cryptology ePrint Archive, Paper 2023/1761. 11 November 2023. <https://eprint.iacr.org/2023/1761>
+[FHX23] E. M. Fondevik, B. Hale, and X. Tian. "Guardianship in Group Key Exchange for Limited Environments". Cryptology ePrint Archive, Paper 2023/1761. 11 November 2023. <https://eprint.iacr.org/2023/1761>
 
 # Appendices 
 
