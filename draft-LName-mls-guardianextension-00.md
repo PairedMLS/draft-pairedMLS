@@ -148,13 +148,15 @@ TODO:
 
 # Introduction
 
-___Paired MLS___ allows a trusted device to update the security parameters of an another group member. The trusted paired device can be added to the group or can be another existing group member. The ___Paired MLS___ extension builds upon MLS (see [RFC9420](https://www.rfc-editor.org/info/rfc9420)). While this document makes recommendations for two versions of ___Paired MLS___ extensions, interested readers can learn about other cases that were evaluated at https://eprint.iacr.org/2023/1761. 
+___Paired MLS___ allows a trusted device to update the security parameters of an another group member. The trusted paired device can be added to the group or can be another existing group member. The ___Paired MLS___ extension builds upon MLS (see [1]. This document makes describes for two operational modes of the ___Paired MLS___ extension; interested readers can learn about other cases that were evaluated at [FHX23]. 
 
-The ___Paired MLS___ extension consists of two operational modes, distinguished by the group's awareness of the pairing: *Anonymous* and *Public* modes based on if the paired device signs on behalf of the partner device or not. To enable the extension, the MLS leaf node must accommodate being shared by at least two devices. This means that, depending on the operational mode, the leaf node would store at least two sets of signature keys. 
+The ___Paired MLS___ extension describes a standard case where each device possesses its own signature key. To enable the standard ___Paired MLS___ extension, the MLS leaf node must accommodate being shared by at least two devices. This means that the leaf node would store at least two sets of signature keys. 
+An additional operational modes is described, *Anonymous* mode, where the paired devices share a signing key and the paired device is able to issue digital signatures on behalf of the partner device in addition to PCS updates. Caveats to the Anonymous mode are discussed further under ___Security Considerations___. 
+
 
 # Extension Execution 
 
-Paired MLS is an extension of MLS, as found in [RFC9420], per user, i.e. per MLS leaf node. Meaning that each MLS leaf node itself MAY decide whether it wishes to run the extension. This extension comes in two variantions, one where all group members are aware that an MLS node uses the extension and one where the usage is opaque to the remaining MLS group members.   
+Paired MLS is an extension of MLS, as found in [1], per user, i.e. per MLS leaf node. Meaning that each MLS leaf node itself MAY decide whether it wishes to run the extension. This extension comes in two variantions, one where all group members are aware that an MLS node uses the extension and one where the usage is opaque to the remaining MLS group members.   
 
 Independent of version selected the execution of the extension assumes the existence of a MLS protocol where the device that desires to execute the extension is already a member, and thus has access to an MLS leaf node. The group member initiating this extension must first negociate the shared randomness with another device: this SHOULD be done via secure hardware and MAY be done through a secure one-to-one channel. [**TODO specify details of this negociation - use Handshake Messages with DS or with an out-of-band chanel?]**
 
