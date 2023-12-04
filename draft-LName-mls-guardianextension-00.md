@@ -209,7 +209,7 @@ A                 B            Directory         Channel
 |        NegociateRand(B)           |              |
 <-----------------+-----------------+              |
 |                 |                 |              |
-**Figure 1b** A is an MLS group member that wishes to pair with device B using the existing MLS infrastructure.
+**Figure 1a** A is an MLS group member that wishes to pair with device B using the existing MLS infrastructure.
 
                                                  Group
 A                 B            Directory         Channel
@@ -281,8 +281,9 @@ MLS commands such as Remove, GroupInfo KeyPackage and Welcome take the form and 
 <!--**[TODO]** Add diagrams of how the protocol is initiated and what messages are sent - use https://asciiflow.com/-->
 
 ## Shared Random Tape
-
+<!--
 Two (or more) devices pair with one another by sharing randomness via a secure out-of-band channel. Once the devices share a random tape, their group key updates are synchronized through the paired device making an update to the MLS group via the anchor node and notifying the passive device to ratchet it's own key forward. **[TODO]** specify how to use a puncturable PRF to ensure the notification to ratchet the key can't be replayed or forged by an adversary. Since the devices share a random tape, their key derivation function will yield the same pseudorandom keys. 
+-->
 
 # Security Considerations
 **[TODO]** Restrictions on how things are stored and shared; assumptions made (sharing the random tape is successfully done with no compromises) - how the randomness is shared is up to the user. 
@@ -302,17 +303,17 @@ This mode of application is desirable when group members do not want to explicit
 **[TODO]** How to address abuse of anonymity
 In hidden mode, pairing is undetectable by the other group members. Through sharing a signature key pair, signed messages to the group would appear to be coming from a single group member instead of unique entities. Traceability of the pair is limited to the MLS Authentication Service (AS) and Delivery Service (DS). Depending on the DS design, the pairing could be detected by the DS to properly deliver messages. In a broadcast/multicast DS design scheme even the DS would be oblivious to the presence of the guardian. 
 
-The ramifications of this Hidden mode include ghost devices that could bypass the AS and DS in joining and participating in a group masquerading as its paired device. Moreover, if one paired device is compromised, then all devices will need to be revoked from the MLS group to regain group security. This is easily done by simply pruning the anchor node shared by the paired members from the ratchet tree. 
+The ramifications of this Hidden mode include ghost devices that could bypass the AS and DS in joining and participating in a group masquerading as its paired device. Moreover, if one paired device is compromised, then all devices will need to be revoked from the MLS group to regain group security. This is easily done by simply pruning the anchor node shared by the paired members from the ratchet tree. To mitigate the abuse of hidden mode, the anchor node MUST be an end-user. Otherwise, ghost users will be able to abuse hidden mode which is intended for multiple devices owned by the same end-user.
 
-
+<!--
 ### Applicable use cases
 This operational mode is applicable when a user wants to explicitly announce that their passive device is in a limited receive-only mode. 
-
+-->
 
 # Extension Changes to MLS
 
 ## Leaf Node Contents
-
+<!--
 The MLS leaf node will need to support multiple signature keys for the public guardian. The leaf node content is modified by changing `signature_key` to a vector of `SignaturePublicKey`. 
 
     struct {
@@ -337,7 +338,7 @@ The MLS leaf node will need to support multiple signature keys for the public gu
         /* SignWithLabel(., "LeafNodeTBS", LeafNodeTBS) */
         opaque signature<V>;
     } LeafNode;
-
+-->
 
 
 #### Shared Randomness Establishment
