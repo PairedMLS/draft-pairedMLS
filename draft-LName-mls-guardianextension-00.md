@@ -342,7 +342,7 @@ The notification message sent to the passive device to forward ratchet its group
 # References
 
 [I-D.ietf-mls-protocol]
-Barnes, R., Beurdouche, B., Robert, R., Millican, J., Omara, E., and K. Cohn-Gordon, "The Messaging Layer Security (MLS) Protocol", Work in Progress, Internet-Draft, draft-ietf-mls-protocol-20, 27 March 2023, <https://datatracker.ietf.org/doc/html/draft-ietf-mls-protocol-20>.
+Barnes, R., Beurdouche, B., Robert, R., Millican, J., Omara, E., and K. Cohn-Gordon. "The Messaging Layer Security (MLS) Protocol". Work in Progress, Internet-Draft, draft-ietf-mls-protocol-20, 27 March 2023. <https://datatracker.ietf.org/doc/html/draft-ietf-mls-protocol-20>
 
 
 ## Normative References (i.e. RFCs)
@@ -351,7 +351,7 @@ Barnes, R., Beurdouche, B., Robert, R., Millican, J., Omara, E., and K. Cohn-Gor
 
 
 ## Informational References 
-Our paper 
+[3] E. M. Fondevik, B. Hale, and X. Tian. "Guardianship in Group Key Exchange for Limited Environments". Cryptology ePrint Archive, Paper 2023/1761. 11 November 2023. <https://eprint.iacr.org/2023/1761>
 
 # Appendices 
 
