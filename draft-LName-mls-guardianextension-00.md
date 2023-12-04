@@ -303,11 +303,15 @@ If the shared randomness between paired devices is leaked then any entity in the
 The main goal of the extension is to reduce epoch sizes when a group member is unable to update. A full secuity analysis pertaining PCS and FS can be found in [FHX23]. If the extension is not utelized or if paired devices are simulatniously unable to update, FS and PCS secuirty is reduced to that of the original MLS. 
 
 ## Discontinuation of Pairings
+**[Todo] currently opperating under a single paired device. If multiple all need to be removed and then readded later.**
 To prevent paried devices to continue, either malicously or unwittingly, to continue updating on each others behalf after the extension is terminated the device initiating termination will need a new set of signing keys.  Furthermore, randomness shared between the devices needs to be discontinued and the updating device needs to be informed that specifically that the extension is discontinued. 
 
+The former of the two requiremenets is acheived by necessetating that a user that wishes to terminate the paired MLS extension MUST first self remove from the MLS group before being added into the group anew with new long term keying material. Before the initating device can inistgate a self remove a termination message MUST be delivered, and accepted, by the paired device.  
 
+## Impersonation
+In standard mode distinct signing keys are used by the main device and its paired device when issuing an update. Impesonation of other MLS group members is therefore not feasible given that the signature keys are known and properly stored. We require that all public signature keys MUST be appropriatley stored and verified, furthermore, metadata conserning whether a key is a main or paired key must be included. **[Todo] Could we have that paired devices use their own key to sign?**
 
-## Impersenation
+In hidden mode only a single MLS key is used. This will allow all users that have access to the private signing key to impersonate the original over. To prevent impersonation of higherups which is difficult to remove. Therefore, only MLS leaf nodes my use the paired MLS extension in hidden mode. If a MLS user presents suspicious behaviour the group member MUST be removed imediatly. 
 
 ## Visability of paired devices to Delivery Service
 
@@ -316,6 +320,8 @@ The traceability of the paired device and the passive device by the rest of the 
 Without the ability to interrogate the delivery service for anonymous pairings, compromised or malicious paired devices may eavesdrop undetected. If a group key is leaked somehow, PCS can be achieved through an update by either of the paired devices. However, if the shared randomness is compromised on one device, then both devices are irrevocably compromised as the attacker could generate new secrets used to generate group keys. 
 
 ----------------
+**[Todo] Security considereation for hidden mode: only MLS leaf nodes my use this extension. To prevent impersonation of higherups which is difficult to remove.**
+
 
 **[TODO]** Restrictions on how things are stored and shared; assumptions made (sharing the random tape is successfully done with no compromises) - how the randomness is shared is up to the user. 
 
