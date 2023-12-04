@@ -286,6 +286,16 @@ Two (or more) devices pair with one another by sharing randomness via a secure o
 -->
 
 # Security Considerations
+
+The goal of the MLS extension is to reduce the security risk that having group members that are unable to update, or updates to seldomly, presents. The extension allows other MLS group member, or other additional devicses to the absent user to update on its behalf. This section presents how the extension acheives this goal.
+
+## Transport Security 
+
+Recomendations for preventing denial of service (DoS) attacks, or restricting transmitted messages are inherited from MLS. Furthermore, message integrity and confedentiality is, as for MLS, protected. 
+
+An adversary that can observ network traffic will be able to disern group membership. The MLS packets for the extension are designed to be indestinguishable form regular MLS packets for anyone but the paired devices. As such a network oberserver will not be able to determined paried devices on packet infromation, however, since paried devices communicate using a seperate channel a network observer might be able to disern general communication from pairing by observing timing and frequency. To prevent the seperated communication form leaking informating directly, this channel MUST be encrypted. We recomend using a TLS connection as a minimum.
+
+
 **[TODO]** Restrictions on how things are stored and shared; assumptions made (sharing the random tape is successfully done with no compromises) - how the randomness is shared is up to the user. 
 
 Generally, the security of this extension is based upon the security of the out-of-band channel for sharing randomness and notification messages. 
@@ -296,7 +306,7 @@ Without the ability to interrogate the delivery service for anonymous pairings, 
 the traceability of the paired device and the passive device by the rest of the group is possible. Public Mode is distinguished by the use of distinct signature keys by paired devices to issue signed updates to the group. This implies that the anchor leaf node holds a signature key for each of the devices sharing it. 
 
 ### Applicable use cases
-This mode of application is desirable when group members do not want to explicitly inform all other group members that they are unable to update. 
+<!-- This mode of application is desirable when group members do not want to explicitly inform all other group members that they are unable to update. -->
 
 
 ## Hidden Mode 
