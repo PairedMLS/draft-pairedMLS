@@ -314,12 +314,18 @@ In standard mode distinct signing keys are used by the main device and its paire
 In hidden mode only a single MLS key is used. This will allow all users that have access to the private signing key to impersonate the original over. To prevent impersonation of higherups which is difficult to remove. Therefore, only MLS leaf nodes my use the paired MLS extension in hidden mode. If a MLS user presents suspicious behaviour the group member MUST be removed imediatly. 
 
 ## Visability of paired devices to Delivery Service
-
 The traceability of the paired device and the passive device by the rest of the group is possible. Standard mode is distinguished by the use of distinct signature keys by paired devices to issue signed updates to the group. This implies that the anchor leaf node holds a signature key for each of the devices sharing it. 
 
 Without the ability to interrogate the delivery service for anonymous pairings, compromised or malicious paired devices may eavesdrop undetected. If a group key is leaked somehow, PCS can be achieved through an update by either of the paired devices. However, if the shared randomness is compromised on one device, then both devices are irrevocably compromised as the attacker could generate new secrets used to generate group keys. 
 
+
+
+
 ----------------
+
+
+
+
 **[Todo] Security considereation for hidden mode: only MLS leaf nodes my use this extension. To prevent impersonation of higherups which is difficult to remove.**
 
 
