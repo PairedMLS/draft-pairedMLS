@@ -293,7 +293,23 @@ The goal of the MLS extension is to reduce the security risk that having group m
 
 Recomendations for preventing denial of service (DoS) attacks, or restricting transmitted messages are inherited from MLS. Furthermore, message integrity and confedentiality is, as for MLS, protected. 
 
-An adversary that can observ network traffic will be able to disern group membership. The MLS packets for the extension are designed to be indestinguishable form regular MLS packets for anyone but the paired devices. As such a network oberserver will not be able to determined paried devices on packet infromation, however, since paried devices communicate using a seperate channel a network observer might be able to disern general communication from pairing by observing timing and frequency. To prevent the seperated communication form leaking informating directly, this channel MUST be encrypted. We recomend using a TLS connection as a minimum.
+An adversary that can observ network traffic will be able to disern group membership. The MLS packets for the extension are designed to be indestinguishable form regular MLS packets for anyone but the paired devices. As such a network oberserver will not be able to determined paried devices on packet infromation, however, since paried devices communicate using a seperate channel a network observer might be able to disern general communication from pairing by observing timing and frequency. To prevent the seperated communication form leaking informating directly, this channel MUST be encrypted. We RECOMEND using a TLS connection as a minimum.
+
+## Security of Shared Randomness
+If the shared randomness between paired devices is leaked then any entity in the position of this information will be able to generate the group session key when either of the devices update on behalf of the other. As such shared random information MUST be stroed, securely and encrypted on all applicable end devices when not in use. Furthermore, we strongly RECOMEND that the randomseeds are loaded through offline hardware loading. If this is not possible a secure, and encrypted channel MUST by utelized to negotiate, or distribute the randomness.   
+
+
+## Post Compromise Security and Forward Secrecy
+
+## Discontinuation of Pairings
+
+## Impersenation
+
+## Visability of paired devices to Delivery Service
+
+The traceability of the paired device and the passive device by the rest of the group is possible. Standard mode is distinguished by the use of distinct signature keys by paired devices to issue signed updates to the group. This implies that the anchor leaf node holds a signature key for each of the devices sharing it. 
+
+Without the ability to interrogate the delivery service for anonymous pairings, compromised or malicious paired devices may eavesdrop undetected. If a group key is leaked somehow, PCS can be achieved through an update by either of the paired devices. However, if the shared randomness is compromised on one device, then both devices are irrevocably compromised as the attacker could generate new secrets used to generate group keys. 
 
 
 **[TODO]** Restrictions on how things are stored and shared; assumptions made (sharing the random tape is successfully done with no compromises) - how the randomness is shared is up to the user. 
@@ -301,9 +317,9 @@ An adversary that can observ network traffic will be able to disern group member
 Generally, the security of this extension is based upon the security of the out-of-band channel for sharing randomness and notification messages. 
 <!--If the shared randomness is obtained by the adversary, then the only way to regain PCS is to remove the leaf node used to anchor the devices from the group. -->
 
-Without the ability to interrogate the delivery service for anonymous pairings, compromised or malicious paired devices may eavesdrop undetected. If a group key is leaked somehow, PCS can be achieved through an update by either of the paired devices. However, if the shared randomness is compromised on one device, then both devices are irrevocably compromised as the attacker could generate new secrets used to generate group keys. 
 
-the traceability of the paired device and the passive device by the rest of the group is possible. Public Mode is distinguished by the use of distinct signature keys by paired devices to issue signed updates to the group. This implies that the anchor leaf node holds a signature key for each of the devices sharing it. 
+
+
 
 ### Applicable use cases
 <!-- This mode of application is desirable when group members do not want to explicitly inform all other group members that they are unable to update. -->
