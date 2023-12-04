@@ -286,22 +286,26 @@ Two (or more) devices pair with one another by sharing randomness via a secure o
 -->
 
 # Security Considerations
-
 The goal of the MLS extension is to reduce the security risk that having group members that are unable to update, or updates to seldomly, presents. The extension allows other MLS group member, or other additional devicses to the absent user to update on its behalf. This section presents how the extension acheives this goal.
 
-## Transport Security 
 
+## Transport Security 
 Recomendations for preventing denial of service (DoS) attacks, or restricting transmitted messages are inherited from MLS. Furthermore, message integrity and confedentiality is, as for MLS, protected. 
 
-An adversary that can observ network traffic will be able to disern group membership. The MLS packets for the extension are designed to be indestinguishable form regular MLS packets for anyone but the paired devices. As such a network oberserver will not be able to determined paried devices on packet infromation, however, since paried devices communicate using a seperate channel a network observer might be able to disern general communication from pairing by observing timing and frequency. To prevent the seperated communication form leaking informating directly, this channel MUST be encrypted. We RECOMEND using a TLS connection as a minimum.
+An adversary that can observ network traffic will be able to disern group membership. The MLS packets for the extension are designed to be indestinguishable form regular MLS packets for anyone but the paired devices. As such a network oberserver will not be able to determined paried devices on packet infromation, however, since paried devices communicate using a seperate channel a network observer might be able to disern general communication from pairing by observing timing and frequency. To prevent the seperated communication form leaking informating directly, this channel MUST be encrypted. We RECOMMEND using a TLS connection as a minimum.
+
 
 ## Security of Shared Randomness
-If the shared randomness between paired devices is leaked then any entity in the position of this information will be able to generate the group session key when either of the devices update on behalf of the other. As such shared random information MUST be stroed, securely and encrypted on all applicable end devices when not in use. Furthermore, we strongly RECOMEND that the randomseeds are loaded through offline hardware loading. If this is not possible a secure, and encrypted channel MUST by utelized to negotiate, or distribute the randomness.   
+If the shared randomness between paired devices is leaked then any entity in the position of this information will be able to generate the group session key when either of the devices update on behalf of the other. As such shared random information MUST be stroed, securely and encrypted on all applicable end devices when not in use. Furthermore, we strongly RECOMMEND that the randomseeds are loaded through offline hardware loading. If this is not possible a secure, and encrypted channel MUST by utelized to negotiate, or distribute the randomness.   
 
 
 ## Post Compromise Security and Forward Secrecy
+The main goal of the extension is to reduce epoch sizes when a group member is unable to update. A full secuity analysis pertaining PCS and FS can be found in [FHX23]. If the extension is not utelized or if paired devices are simulatniously unable to update, FS and PCS secuirty is reduced to that of the original MLS. 
 
 ## Discontinuation of Pairings
+To prevent paried devices to continue, either malicously or unwittingly, to continue updating on each others behalf after the extension is terminated the device initiating termination will need a new set of signing keys.  Furthermore, randomness shared between the devices needs to be discontinued and the updating device needs to be informed that specifically that the extension is discontinued. 
+
+
 
 ## Impersenation
 
@@ -311,6 +315,7 @@ The traceability of the paired device and the passive device by the rest of the 
 
 Without the ability to interrogate the delivery service for anonymous pairings, compromised or malicious paired devices may eavesdrop undetected. If a group key is leaked somehow, PCS can be achieved through an update by either of the paired devices. However, if the shared randomness is compromised on one device, then both devices are irrevocably compromised as the attacker could generate new secrets used to generate group keys. 
 
+----------------
 
 **[TODO]** Restrictions on how things are stored and shared; assumptions made (sharing the random tape is successfully done with no compromises) - how the randomness is shared is up to the user. 
 
