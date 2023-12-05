@@ -90,9 +90,7 @@ This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relatin
 
 1. Terminology
 2. Introduction
-3. Extension Overview (what gets shared with who and how)
-    [Diagrams of what end users see]
-    [Diagram of step-by-step initiation of protocol]
+3. Extension Execution
 4. Security Considerations 
     Restrictions for users, storage, and random tape sharing
     Anonymous Mode
