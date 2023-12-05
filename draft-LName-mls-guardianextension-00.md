@@ -42,24 +42,19 @@ informative:
 --- abstract
 
 # Done since last major commit
-- Diagrams updated; prose updated 
-- Hidden mode security consideration - use on leaf node only
-- How to exit pairing and enforcing termination of pairing
-
 
 # TODOs
-- Specify the format of the notification message: Public Message vs Private Message trade offs. 
-- How to more efficiently terminate PairedMLS without relying on being re-added to the group. Is there a way to self-remove and then self-add? (think this can be todo for later)
-- Double-check the new diagrams (all have been updated).  (done)
-- Organizationally create Hidden Mode and Standard Mode sections (done)
-- Token passing option. 
+- Specify the format of the notification message.
+- Add context on how to efficiently terminate Paired MLS 
+<!--- How to more efficiently terminate PairedMLS without relying on being re-added to the group. Is there a way to self-remove and then self-add? (think this can be todo for later)--->
+- Add token passing option 
 
-
+<!--
 #NOTES from ESM
 - In terminology passive/active device seems to refer to the original owner (in case of leaf node) instigator, or initiator otherwise. should it really be possible to change roles? I agree that online/offline should be changable but not ownership
 
 - In 3. Extension... devices are said to be paired after randomness is negotiated, what about signature keys for specific node?
-
+-->
 
 
 
@@ -309,8 +304,9 @@ A            B              G1  ...    Gn         Directory     Channel
 
 <!--**[TODO]** Add diagrams of how the protocol is initiated and what messages are sent - use https://asciiflow.com/-->
 
-## 3.2 Shared Random Tape
+
 <!--
+## 3.2 Shared Random Tape
 Two (or more) devices pair with one another by sharing randomness via a secure out-of-band channel. Once the devices share a random tape, their group key updates are synchronized through the paired device making an update to the MLS group via the anchor node and notifying the passive device to ratchet it's own key forward. **[TODO]** specify how to use a puncturable PRF to ensure the notification to ratchet the key can't be replayed or forged by an adversary. Since the devices share a random tape, their key derivation function will yield the same pseudorandom keys. 
 -->
 
