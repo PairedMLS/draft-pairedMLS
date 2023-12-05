@@ -217,8 +217,8 @@ MLS commands such as Remove, GroupInfo KeyPackage and Welcome take the form and 
 
 ## 3.1 Example Run of Paired MLS
 
-### 3.1.1 Negotiate Randomness 
- While we recommend shared randomness be installed into secure hardware in paired devices, we recognize this is not always practical. Therefore, randomness may also be shared via the MLS Delivery Service (DS) (Fig 1a) or an out-of-band secure channel (Fig 1b). The latter case is fairly straight forward. In the former case, Device A initiates the beginning of the Paired MLS extension by first sharing randomness with B and informing the DS of the pairing. The paired device B will then inform the DS that it is ready to run the protocol. After the DS has been informed by both initiator and its paired device an accept reply is returned to both devices. 
+### 3.1.1 Negotiate Pairing
+While shared randomness enables pairing, the signaling of a paired update may have various degree of transparency to the other group members. Signaling of pairing may be done via the MLS Delivery Service (DS) (Fig 1a) or an out-of-band channel (Fig 1b). The latter case is fairly straight forward, in that either of the paired devices informs the other that PCS updates using the shared randomness will be performed. In the former case, Device Am in possession of shared randomness with B, initiates the beginning of the Paired MLS extension by informing the DS of the pairing. The paired device B will then inform the DS that it is ready to run the protocol. After the DS has been informed by both initiator and its paired device an accept reply is returned to both devices. 
 
                                                     Group
     A                 B            Directory         Channel
