@@ -277,21 +277,6 @@ The detection of the active/passive status of the paired devices to the rest of 
 
 In hidden mode, the DS is still aware of the devices A and B but may not be aware of the pairing status. The anchoring node's signature key is used by both devices, but whether or not they possess shared randomness to perform updates on the behalf of the other is not known to the DS. 
 
-----------------
-
-
-
-
-**[Todo] Security considereation for hidden mode: only MLS leaf nodes my use this extension. To prevent impersonation of higherups which is difficult to remove.**
-
-
-**[TODO]** Restrictions on how things are stored and shared; assumptions made (sharing the random tape is successfully done with no compromises) - how the randomness is shared is up to the user. 
-
-Generally, the security of this extension is based upon the security of the out-of-band channel for sharing randomness and notification messages. 
-<!--If the shared randomness is obtained by the adversary, then the only way to regain PCS is to remove the leaf node used to anchor the devices from the group. -->
-
-
-
 
 
 # 5. Operational Modes
@@ -300,15 +285,16 @@ Generally, the security of this extension is based upon the security of the out-
 In standard mode, pairing is transparent to the the directory and group members. The paired devices share an anchor node which may or may not be a MLS Leaf Node. If both devices are sharing one MLS leaf node as their anchor, the directory will need to associate the signature keys of both devices to that leaf node. Message sending and group operations will be able to be performed by either paired devices but will be distinguishable by the signature on the commit. When terminating Standard Paired MLS, the device wishing to exit pairing will notify the other device which MUST stop using the shared randomness and shared anchor. To ensure this, the exiting device will also issue a self-remove which prevents B from updating their shared anchor node. 
 ### 5.1.1. Message Content
 
-## 5.1 Hidden Mode 
+## 5.2 Hidden Mode 
 In hidden mode, pairing is undetectable by the other group members. Through sharing a signature key pair, signed messages to the group would appear to be coming from a single group member instead of unique entities. Traceability of the pair is limited to the MLS Authentication Service (AS) and Delivery Service (DS). Depending on the DS design, the pairing could be detected by the DS to properly deliver messages. In a broadcast/multicast DS design scheme even the DS would be oblivious to the presence of the guardian. 
 
 The ramifications of this Hidden mode include ghost devices that could bypass the AS and DS in joining and participating in a group masquerading as its paired device. Moreover, if one paired device is compromised, then all devices will need to be revoked from the MLS group to regain group security. This is easily done by simply pruning the anchor node shared by the paired members from the ratchet tree. To mitigate the abuse of hidden mode, the anchor node MUST be an end-user. Otherwise, hidden mode abuse can result in sub-group impersonation or ghost users whereas hidden mode is intended for multiple devices owned by the same end-user.
 
+<!-- 
 ### 5.2.1 Message Content Differentiating from Standard Mode
 
 ### 5.2.2 Applicable use cases 
-<!-- This mode of application is desirable when group members do not want to explicitly inform all other group members that they are unable to update. -->
+This mode of application is desirable when group members do not want to explicitly inform all other group members that they are unable to update. -->
 
 <!--
 ### Applicable use cases
