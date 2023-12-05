@@ -204,7 +204,8 @@ MLS commands such as Remove, GroupInfo KeyPackage and Welcome take the form and 
 
 ### 3.1 Issuing a Paired Update
 
-Once A and B have been paired, device A can issue an update on behalf of B. A sends the update to the rest of the MLS group as a normal commit. From the perspective of MLS group members not in the pairing this update will be indistinguishable from any other MLS update preformed by A. In hidden mode, updates by either A or B will appear to come from the one device whose signing key is shared. From the passive paired device's perspective, it will need to be notified (either directly or indirectly) to compute the new group key in order to stay in sync with the new group epoch. In standard mode, the DS has the additional task of notifying B of the update. In hidden mode (Fig 2), a notification is sent directly to B via an out-of-band channel. 
+Once A and B have been paired, active device A can issue an update on behalf of passive device B. A sends the update to the rest of the MLS group as a normal commit. From the perspective of other MLS group members this update will be indistinguishable from any other MLS update preformed by A. Furthermore, in hidden mode, updates by the paired devices A or B will appear to come from anchor, given the shared signing key. 
+A will send the *Notify* message to B, where notify is indistinguishable to other group members from a commit message to B. The *Notify* message signals to B how it should use the shared randomness to derive the necessary update for the new group key in order to stay in sync with the new group epoch. 
 
                                                                     Group
     A            B              G1  ...    Gn         Directory     Channel
