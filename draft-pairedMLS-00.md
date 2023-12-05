@@ -227,7 +227,7 @@ Remaining MLS group members, which are labeled G1, ..., Gn, will receive the sta
 If any other MLS group member sends proposals or commits to the paired devices the process will follow the flow as defined in RFC9420 [1].
 
 
-### 3.1.3 Terminate Pairing 
+### 3.2 Termination of Pairing 
 To end Paired MLS extension, either A or B may issue an out-of-band request to its paired device to cease paring. This request notifies the other device to stop using the shared randomness to update on the other's behalf. In standard mode, pairing termination can be enforced through a self-remove and re-add to the group.  
 In hidden mode, an out-of-band cease pairing request can similarly be issued, but enforcing the termination is more challenging since removing either device is opaque to the MLS given the shared signature key. This will be discussed further under Security Considerations. It is possible, however, to enforce termination of the pairing and hidden mode by removing both devices and re-adding under separate signature keys.
 
