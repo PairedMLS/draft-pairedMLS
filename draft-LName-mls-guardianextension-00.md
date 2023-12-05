@@ -91,17 +91,17 @@ This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relatin
 
 1. Terminology
 2. Introduction
-3. Convention and Definitions
-4. Extension Overview (what gets shared with who and how)
+3. Extension Overview (what gets shared with who and how)
     [Diagrams of what end users see]
     [Diagram of step-by-step initiation of protocol]
-5. Security Considerations 
+4. Security Considerations 
     Restrictions for users, storage, and random tape sharing
     Anonymous Mode
-6. Extension Requirements to MLS 
-7. IANA Considerations
-8. Acknowledgements 
-9. Normative References 
+5.  Operational Modes   
+7. Extension Requirements to MLS 
+8. IANA Considerations
+9. Acknowledgements 
+10. Normative References 
 
 
 # 1. Terminology
@@ -358,19 +358,35 @@ Generally, the security of this extension is based upon the security of the out-
 
 
 
-### Applicable use cases
-<!-- This mode of application is desirable when group members do not want to explicitly inform all other group members that they are unable to update. -->
+# 5. Operational Modes
 
+## 5.1 Standard Mode
 
-## Hidden Mode 
+### 5.1.1. Message Content
+
+## 5.1 Hidden Mode 
 In hidden mode, pairing is undetectable by the other group members. Through sharing a signature key pair, signed messages to the group would appear to be coming from a single group member instead of unique entities. Traceability of the pair is limited to the MLS Authentication Service (AS) and Delivery Service (DS). Depending on the DS design, the pairing could be detected by the DS to properly deliver messages. In a broadcast/multicast DS design scheme even the DS would be oblivious to the presence of the guardian. 
 
 The ramifications of this Hidden mode include ghost devices that could bypass the AS and DS in joining and participating in a group masquerading as its paired device. Moreover, if one paired device is compromised, then all devices will need to be revoked from the MLS group to regain group security. This is easily done by simply pruning the anchor node shared by the paired members from the ratchet tree. To mitigate the abuse of hidden mode, the anchor node MUST be an end-user. Otherwise, hidden mode abuse can result in sub-group impersonation or ghost users whereas hidden mode is intended for multiple devices owned by the same end-user.
+
+### 5.2.1 Message Content Differentiating from Standard Mode
+
+### 5.2.2 Applicable use cases 
+<!-- This mode of application is desirable when group members do not want to explicitly inform all other group members that they are unable to update. -->
 
 <!--
 ### Applicable use cases
 This operational mode is applicable when a user wants to explicitly announce that their passive device is in a limited receive-only mode. 
 -->
+
+### 5.2.2 Special Security Considerations and Warnings
+
+
+
+
+
+
+
 
 # Extension Changes to MLS
 
