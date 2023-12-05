@@ -137,16 +137,7 @@ Readers are encouraged to see [FHX23] for security tradeoff analysis.
 <!--{::boilerplate bcp14-tagged}-->
 
 <!--
-# BH Notes
 
-Title: PCS in Limited Modes (or something not Guardian)
-  - Might be room to collab with User Trees  
-
-Recommend standards track 
-No use of guardian/edge terminology (anchor is ok)
-
-Choose 4b: Shared Rand, Distinct Signature Keys 
- OR 
 - Puncturable SOMETHING (PRF) approach: Alice and Bob are going to share randomness. Alice shares update to Group but not to Bob. Alice shares puncturable information to Bob so he can roll key forward. How do we send a message to Bob to have him update the key without an adversary being able to do the same?
 
 The idea that the puncturable *something* can't be replayed.. 
@@ -156,9 +147,6 @@ The idea that the puncturable *something* can't be replayed..
 - Chnage nomenclature to not have edge or guardian mentions. Use user-tree POV instead (e.g. user device A user device B).
 
 - If Alice and Bob not paired you do a standard KEM update to share the randomness with Bob. If they are paired, you'll have to find a different way (via the puncturable PRF msg) to signal to Bob to update their state. It needs be formatted properly for the DS to handle (check proposal, commit, and update message structure looks for a peer). It needs to look like how a KEM would (i.e. appear random). 
-
-TODO: 
-- 
 -->
 
 
