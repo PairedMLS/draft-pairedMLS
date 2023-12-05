@@ -55,6 +55,11 @@ informative:
 - Token passing option. 
 
 
+#NOTES from ESM
+- In terminology passive/active device seems to refer to the original owner (in case of leaf node) instigator, or initiator otherwise. should it really be possible to change roles? I agree that online/offline should be changable but not ownership
+
+- In 3. Extension... devices are said to be paired after randomness is negotiated, what about signature keys for specific node?
+
 
 
 
