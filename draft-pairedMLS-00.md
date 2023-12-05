@@ -278,7 +278,7 @@ The detection of the active/passive status of the paired devices to the rest of 
 In hidden mode, the DS is still aware of the devices A and B but may not be aware of the pairing status. The anchoring node's signature key is used by both devices, but whether or not they possess shared randomness to perform updates on the behalf of the other is not known to the DS. 
 
 
-
+<!--
 # 5. Operational Modes
 
 ## 5.1 Standard Mode
@@ -289,6 +289,9 @@ In standard mode, pairing is transparent to the the directory and group members.
 In hidden mode, pairing is undetectable by the other group members. Through sharing a signature key pair, signed messages to the group would appear to be coming from a single group member instead of unique entities. Traceability of the pair is limited to the MLS Authentication Service (AS) and Delivery Service (DS). Depending on the DS design, the pairing could be detected by the DS to properly deliver messages. In a broadcast/multicast DS design scheme even the DS would be oblivious to the presence of the guardian. 
 
 The ramifications of this Hidden mode include ghost devices that could bypass the AS and DS in joining and participating in a group masquerading as its paired device. Moreover, if one paired device is compromised, then all devices will need to be revoked from the MLS group to regain group security. This is easily done by simply pruning the anchor node shared by the paired members from the ratchet tree. To mitigate the abuse of hidden mode, the anchor node MUST be an end-user. Otherwise, hidden mode abuse can result in sub-group impersonation or ghost users whereas hidden mode is intended for multiple devices owned by the same end-user.
+-->
+
+
 
 <!-- 
 ### 5.2.1 Message Content Differentiating from Standard Mode
@@ -299,15 +302,10 @@ This mode of application is desirable when group members do not want to explicit
 <!--
 ### Applicable use cases
 This operational mode is applicable when a user wants to explicitly announce that their passive device is in a limited receive-only mode. 
--->
+
 
 ### 5.2.2 Special Security Considerations and Warnings
-
-
-
-
-
-
+-->
 
 
 # 6. Extension Requirements to MLS
