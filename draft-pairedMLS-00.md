@@ -220,13 +220,11 @@ A will send the *Notify* message to B, where *Notify* is indistinguishable to ot
     |            <--------------+----------+--------------+-----------+
     |            |              |          |              |           |
 
-**Figure 2** Paired device A, in hidden mode, updates with a commit on behalf of B to the group. At the same time, device A notifies B to update its group key in order to stay synced with the group. In standard mode, this notification sent to B by the DS is formatted like a commit message. Remaining MLS group members, which are labeled G1, ..., Gn, will receive standard commit messages from the DS. 
+**Figure 1** Active device A updates with a commit on behalf of B to the group. The commit message is process as in MLS for all members (A, B, G1, ..., Gn). The Update message is processed as in MLS, but with the change that the update for B is computed as a notify message instead. The notify message is formatted the same as a commit message form the view of the DS. 
+Remaining MLS group members, which are labeled G1, ..., Gn, will receive the standard update messages from the DS. 
 
-If any other MLS group member sends proposals or commits to the paired devices the process will follow the flow as defined in RFC9420 with the additional step of notifying the passive device of an update. In standard mode, this is done by the DS. In hidden mode, this is done out-of-band. If the network used is a multicast or broadcast setting, the additional step is not needed. 
-<!--
-When at some point A has to enter limited mode, i.e. will no longer be able to issue updates, B will need to be informed that it needs to take charge and become the new main device. This command does not affect the MLS group and only occurs as direct communication between A and B as well as informing the DS of a change in main device.
+If any other MLS group member sends proposals or commits to the paired devices the process will follow the flow as defined in RFC9420 [1].
 
-Now that B is the new main device it is in charge of updating the MLS leaf node. The updates issued by B is dones similarily as the update preformed by A as seen in, **Figure 2**. -->
 
 ### 3.1.3 Teminate Pairing 
 To end MLS Paired mode extension either A or B may issue an _CeasePair_ command. This command notifies the other device to stop using the shared randomness and paired signature key(s). The requesting device will issue a self-remove commitment to the group. After the commit is processed by the group, B can no longer issue updates or commits on behalf of A. In Hidden Mode, this removes the anchor leaf node which effectively removes both devices. In order to resume the standard MLS group session, Device A rejoins the group with new signing keys associated to her identity. In Hidden Mode, B will need to rejoin the group using its own signing keys if it desires to continue communicating with the group. 
