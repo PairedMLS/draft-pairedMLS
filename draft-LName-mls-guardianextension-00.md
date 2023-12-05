@@ -38,8 +38,7 @@ normative:
 
 informative:
 
-
---- abstract
+---
 
 # Done since last major commit
 
