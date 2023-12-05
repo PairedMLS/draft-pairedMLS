@@ -200,23 +200,24 @@ MLS commands such as Remove, GroupInfo KeyPackage and Welcome take the form and 
 
 ### 3.1 Issuing a Paired Update
 
-Once A and B have been paired, active device A can issue an update on behalf of passive device B. A sends the update to the rest of the MLS group as a normal commit. From the perspective of other MLS group members this update will be indistinguishable from any other MLS update preformed by A. Furthermore, in hidden mode, updates by the paired devices A or B will appear to come from anchor, given the shared signing key. 
-A will send the *Notify* message to B, where notify is indistinguishable to other group members from a commit message to B. The *Notify* message signals to B how it should use the shared randomness to derive the necessary update for the new group key in order to stay in sync with the new group epoch. 
+Once A and B have been paired, active device A can issue an update on behalf of passive device B. A sends the update to the rest of the MLS group as a normal commit. From the perspective of other MLS group members this update will be indistinguishable from any other MLS update preformed by A. Furthermore, in hidden mode, updates by the paired devices A or B will appear to come from the anchor, due to the shared signing key. 
+A will send the *Notify* message to B, where *Notify* is indistinguishable to other group members from a commit message to B. The *Notify* message signals to B how it should use the shared randomness to derive the necessary update for the new group key in order to stay in sync with the new group epoch. 
 
                                                                     Group
     A            B              G1  ...    Gn         Directory     Channel
     |Update(B)   |              |          |              |           |
-    |Commit(upd) |              |          |              |           |
-    +------------+--------------+----------+--------------+----------->
+    |Commit(Upd) |              |          |              |           |
     |Notify(B)   |              |          |              |           |
-    +------------>              |          |              |           |
+    +----------------------------------------------------------------->
     |            |              |          |              |           |
     |            |              |          |              |Commit(Upd)|
-    <------------+--------------+----------+--------------+-----------+
-    |            |              |          |              |[Notify(B)]|
-    |            <--------------+----------+--------------+-----------+
+    |            |              |          |              |Update(B)  |
+    <-----------------------------------------------------------------+
     |            |              <----------+--------------+-----------+
     |            |              |          <--------------+-----------+
+    |            |              |          |              |Commit(Upd)|
+    |            |              |          |              |Notify(B)  |
+    |            <--------------+----------+--------------+-----------+
     |            |              |          |              |           |
 
 **Figure 2** Paired device A, in hidden mode, updates with a commit on behalf of B to the group. At the same time, device A notifies B to update its group key in order to stay synced with the group. In standard mode, this notification sent to B by the DS is formatted like a commit message. Remaining MLS group members, which are labeled G1, ..., Gn, will receive standard commit messages from the DS. 
