@@ -388,9 +388,9 @@ This operational mode is applicable when a user wants to explicitly announce tha
 
 
 
-# Extension Changes to MLS
+# 6. Extension Requirements to MLS
 
-## Leaf Node Contents
+## 6.1 Leaf Node Contents
 <!--
 The MLS leaf node will need to support multiple signature keys for the public guardian. The leaf node content is modified by changing `signature_key` to a vector of `SignaturePublicKey`. 
 
@@ -419,11 +419,13 @@ The MLS leaf node will need to support multiple signature keys for the public gu
 -->
 
 
-#### Shared Randomness Establishment
+## 6.2 Shared Randomness Establishment
 The security of this extension is based upon the security of the out-of-band channel to used to establish shared randomness. In other words, if an adversary is granted access to the shared randomness, then the MLS group security is broken irrevocably as PCS could never be recovered except via removal. Therefore, we RECOMMEND the shared-randomness be installed via protected hardware in the same way that long-term signing keys stored such that it is infeasible to be accessed by an adversary. The shared-randomness MAY be shared via a secure 1-to-1 channel such as a key encapsulation mechanism between the devices. 
 
-#### Notifications Between Paired Devices
+## 6.3  Notifications Between Paired Devices
 The notification message sent to the passive device to forward ratchet its group key must be secured from forgery and replay attacks. If an attacker were able to to prompt either devices to update, then they would fall out-of-sync and be unable to decrypt future group messages. 
+
+## 6.4 Multiple Signature Keys per MLS NODE
 
 # IANA Considerations 
 **[TODO]** Determine an extension code to use
