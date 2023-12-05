@@ -41,6 +41,23 @@ informative:
 
 --- abstract
 
+# Done since last major commit
+- Diagrams updated; prose updated 
+- Hidden mode security consideration - use on leaf node only
+- How to exit pairing and enforcing termination of pairing
+
+
+# TODOs
+- Specify the format of the notification message: Public Message vs Private Message trade offs. 
+- How to more efficiently terminate PairedMLS without relying on being re-added to the group. Is there a way to self-remove and then self-add?
+- Double-check the new diagrams (all have been updated). 
+- Organizationally create Hidden Mode and Standard Mode sections
+- Token passing option. 
+
+
+
+
+
 # Abstract 
 This document describes the Paired Messaging Layer Security (MLS) extension that improves Post Compromise Security for devices that are unable to self-update using a trusted paired device. 
 
@@ -151,7 +168,7 @@ TODO:
 ___Paired MLS___ allows a trusted device to update the security parameters of an another group member. The trusted paired device can be added to the group or can be another existing group member. The ___Paired MLS___ extension builds upon MLS (see [1]. This document makes describes for two operational modes of the ___Paired MLS___ extension; interested readers can learn about other cases that were evaluated at [FHX23]. 
 
 The ___Paired MLS___ extension describes a standard case where each device possesses its own signature key. To enable the standard ___Paired MLS___ extension, the MLS leaf node must accommodate being shared by at least two devices. This means that the leaf node would store at least two sets of signature keys. 
-An additional operational modes is described, *Anonymous* mode, where the paired devices share a signing key and the paired device is able to issue digital signatures on behalf of the partner device in addition to PCS updates. Caveats to the Anonymous mode are discussed further under ___Security Considerations___. 
+An additional operational mode is described, *Anonymous* mode, where the paired devices share a signing key and the paired device is able to issue digital signatures on behalf of the partner device in addition to PCS updates. Caveats to the Anonymous mode are discussed further under ___Security Considerations___. 
 
 
 # Extension Execution 
@@ -159,9 +176,9 @@ An additional operational modes is described, *Anonymous* mode, where the paired
 <!-- Paired MLS is an extension of MLS, as found in [1], per user, i.e. per MLS leaf node. Meaning that each MLS leaf node itself MAY decide whether it wishes to run the extension. This extension comes in two variantions, one where all group members are aware that an MLS node uses the extension and one where the usage is opaque to the remaining MLS group members.   
 -->
 
-Independent of version selected the execution of the extension assumes the existence of a MLS protocol where the device that desires to execute the extension is already a member, and thus has access to an MLS leaf node. The group member initiating this extension must first negociate the shared randomness with another device: this SHOULD be done via secure hardware and MAY be done through a secure one-to-one channel. [**TODO specify details of this negociation - use Handshake Messages with DS or with an out-of-band chanel?]**
+Independent of version selected the execution of the extension assumes the existence of a MLS protocol where the device that desires to execute the extension is already a member, and thus has access to an MLS leaf node. The group member initiating this extension must first negotiate the shared randomness with another device: this SHOULD be done via secure hardware and MAY be done through a secure one-to-one channel. 
 
-After the shared randomness is established, the devices are "paired" and either device may update on the other's behalf. When the active device issues an update to the group on behalf of the passive device it will also issue a notification to the passive device to ratchet forward its group key. This ensures the passive device can still process updates and commits made by other group members. The notification message MUST be formatted as a MLS Private Message to the paired devices group. **[TODO: Private Message vs Public Message for notification]**
+After the shared randomness is established, the devices are "paired" and either device may update on the other's behalf. When the active device issues an update to the group on behalf of the passive device it will also issue a notification to the passive device to ratchet forward its group key. This ensures the passive device stays synched with the group epoch so it can process updates and commits made by other group members. To protect the privacy of the paired devices, this notification message must be discretely sent using either an out-of-band secure chanel or an MLS Private Message when sent by the common DS. 
 
 <!--
 Important; once a device has initiated the use of Paired MLS mode, the original MLS commands become obsolete for the specified MLS leaf node, instead the following commands take precedence. 
@@ -177,7 +194,7 @@ Messages transmitted in the paired MLS extsion are those inherited from MLS [1] 
 
 * A _NegociateRand_ message is sent between MLS leaf node to initiate the paried MLS extension. If no randomness was priorly loaded this is preformed in this step as well.
 * A __Update_ message is inherited from MLS but with the addiotional potential of being executed on another paried devices behalf. If the acction is preformed on another instances behalf a __Notification__ message is transmitted as well.
-* A _CeasePCS_ message is sent form the original MLS leaf node to its paired device to terminate execution of Paired MLS.
+* A _CeasePair_ message is sent form the original MLS leaf node to its paired device to terminate execution of Paired MLS.
 <!-- * A _Toggle_ message is sent between paired devices to determine who is resposible for MLS updates. -->
 <!-- * _ACK_ messages are returned by the paired device to signify command has been recieved and accepted. __[ToDo]__ dont think this is needed.-->
 
@@ -190,7 +207,7 @@ __[XT Notes]__
 ## Example Run of Paired MLS
 
 ### Negotiate Randomness 
-The following is an example of using a one-time secure channel to establish shared randomness. Device A initiates the beginning of the Paired MLS extension by first sharing randomness with B and informing the DS of the pairing. The paired device B will then inform the DS that it is ready to run the protocol. After the DS has been informed by both initiator and its paired device an accept reply is returned to both devices (see Figure 1). Alternatively, in a hidden mode, A and B can share randomness outside of the purview of the DS in a one-to-one channel.
+ While we recommend shared randomness be installed into secure hardware in paired devices, we recognize this is not always practical. Therefore, randomness may also be shared via the MLS Delivery Service (DS) (Fig 1a) or an out-of-band secure channel (Fig 1b). The latter case is fairly straight forward. In the former case, Device A initiates the beginning of the Paired MLS extension by first sharing randomness with B and informing the DS of the pairing. The paired device B will then inform the DS that it is ready to run the protocol. After the DS has been informed by both initiator and its paired device an accept reply is returned to both devices. 
 
                                                  Group
 A                 B            Directory         Channel
@@ -211,10 +228,11 @@ A                 B            Directory         Channel
 
                                                  Group
 A                 B            Directory         Channel
-| NegotiateRand(B)|                 |              |
+| ShareRand(B)    |                 |              |
 +----------------->                 |              |
 |                 |                 |              |
-| NegotiateRand(B)|                 |              |
+| InitPairing(AB) |                 |              |
+| Accept(pair)    |                 |              |
 <-----------------+                 |              |
 |                 |                 |              |
 **Figure 1b** A is an MLS group member that wishes to pair with device B using a secure one-to-one channel to negotiate a shared random seed. 
@@ -248,7 +266,7 @@ Now that B is the new main device it is in charge of updating the MLS leaf node.
 To end MLS Paired mode extension either A or B may issue an _CeasePair_ command. This command notifies the other device stop using the shared randomness and paired signature key. Then the requesting device will issue a self-remove commitment to the group. After the commit is processed by the group, B can no longer issue updates or commits on behalf of A. In Hidden Mode, this removes the anchor leaf node which effectively removes both devices. In order to resume the standard MLS group session, Device A finally rejoins the group with new signing keys associated to her identity. In Hidden Mode, B will also need to rejoin the group using its own signing keys. 
 
 
-In the following example, A wishes to decouple from B and is the one issuing the removal. **[TODO]** Figure out a way to rejoin the group without needing to be added by another group member - maybe using a token passed to the AS/DS? Or use original A's original keypackage?
+In the following example, A wishes to decouple from B and is the one issuing the removal. 
 
                                                                 Group
 A            B              G1  ...    Gn         Directory     Channel
@@ -263,7 +281,7 @@ A            B              G1  ...    Gn         Directory     Channel
 |            |              <----------+--------------+-----------+
 |            |              |          <--------------+-----------+
 |            |              |          |              |           |
-
+**Figure 3** Paired device A wants to exit the PairedMLS extension with B and leave the group. It first notifies B via CeasePair() and then it commits a self-remove(). A may rejoin the group but must join using new signing keys. 
 
 MLS commands such as Remove, GroupInfo KeyPackage and Welcome take the form and are processed as according to RFC9420. 
 
@@ -305,6 +323,7 @@ In hidden mode, a single signing key is used by all paired devices. This will al
 ## Visability of paired devices to Delivery Service
 The traceability of the paired active device and the passive device by the rest of the group is possible. Standard mode is distinguished by the use of distinct signature keys by paired devices to issue signed updates to the group. This implies that the anchoring node holds a signature key for each of the devices sharing it. 
 
+## Eavesdropping 
 Without the ability to interrogate the delivery service for anonymous hidden pairings, compromised or malicious paired devices may eavesdrop undetected in hidden mode. If a group key is leaked somehow, PCS can be achieved through an update by either of the paired devices. However, if the shared randomness is compromised on one device, then both devices are irrevocably compromised as the attacker could generate new secrets used to generate group keys. 
 
 
@@ -332,10 +351,9 @@ Generally, the security of this extension is based upon the security of the out-
 
 
 ## Hidden Mode 
-**[TODO]** How to address abuse of anonymity
 In hidden mode, pairing is undetectable by the other group members. Through sharing a signature key pair, signed messages to the group would appear to be coming from a single group member instead of unique entities. Traceability of the pair is limited to the MLS Authentication Service (AS) and Delivery Service (DS). Depending on the DS design, the pairing could be detected by the DS to properly deliver messages. In a broadcast/multicast DS design scheme even the DS would be oblivious to the presence of the guardian. 
 
-The ramifications of this Hidden mode include ghost devices that could bypass the AS and DS in joining and participating in a group masquerading as its paired device. Moreover, if one paired device is compromised, then all devices will need to be revoked from the MLS group to regain group security. This is easily done by simply pruning the anchor node shared by the paired members from the ratchet tree. To mitigate the abuse of hidden mode, the anchor node MUST be an end-user. Otherwise, ghost users will be able to abuse hidden mode which is intended for multiple devices owned by the same end-user.
+The ramifications of this Hidden mode include ghost devices that could bypass the AS and DS in joining and participating in a group masquerading as its paired device. Moreover, if one paired device is compromised, then all devices will need to be revoked from the MLS group to regain group security. This is easily done by simply pruning the anchor node shared by the paired members from the ratchet tree. To mitigate the abuse of hidden mode, the anchor node MUST be an end-user. Otherwise, hidden mode abuse can result in sub-group impersonation or ghost users whereas hidden mode is intended for multiple devices owned by the same end-user.
 
 <!--
 ### Applicable use cases
@@ -377,7 +395,7 @@ The MLS leaf node will need to support multiple signature keys for the public gu
 The security of this extension is based upon the security of the out-of-band channel to used to establish shared randomness. In other words, if an adversary is granted access to the shared randomness, then the MLS group security is broken irrevocably as PCS could never be recovered except via removal. Therefore, we RECOMMEND the shared-randomness be installed via protected hardware in the same way that long-term signing keys stored such that it is infeasible to be accessed by an adversary. The shared-randomness MAY be shared via a secure 1-to-1 channel such as a key encapsulation mechanism between the devices. 
 
 #### Notifications Between Paired Devices
-The notification message sent to the passive device to forward ratchet its group key must be secured from forgery and replay attacks. If an attacker were able to to prompt either devices to update, then they would fall out-of-sync and be unable to decrypt future group messages. **[TODO]** Recommend sending notifications using the MLS DS or some other out-of-band DS? 
+The notification message sent to the passive device to forward ratchet its group key must be secured from forgery and replay attacks. If an attacker were able to to prompt either devices to update, then they would fall out-of-sync and be unable to decrypt future group messages. 
 
 # IANA Considerations 
 **[TODO]** Determine an extension code to use
