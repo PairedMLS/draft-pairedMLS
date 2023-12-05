@@ -214,48 +214,6 @@ Optionally, if randomness between paired devices is transmitted online the follo
 MLS commands such as Remove, GroupInfo KeyPackage and Welcome take the form and are processed as according to [1]. 
 
 
-<!--
-**TODO** This section does not seem to have follow a logical protocol pattern.
-
-## 3.1 Example Run of Paired MLS
-
-### 3.1.1 Signaling Pairing 
-While shared randomness enables pairing, the signaling of paired status may have various degree of transparency to the other group members. Signaling of pairing may be done via an out-of-band channel (Fig 1a) or the MLS Delivery Service (DS) (Fig 1b). The former case is fairly straight forward, in that either of the paired devices informs the other that PCS updates using the shared randomness will be performed. In the latter case, one of the paired devices, Device A, initiates the beginning of the Paired MLS extension by informing the DS of the pairing. The paired device B will then inform the DS that it is ready to run the protocol. After the DS has been informed by both initiator and its paired device an accept reply is returned to both devices. 
--->
-
-<!--                                                    Group
-    A                 B            Directory         Channel
-    |                 |                 |              |
-    | InitPairing(AB) |                 |              |
-    +----------------->                 |              |
-    |                 |                 |              |
-    | Accept(pair)    |                 |              |
-    <-----------------+                 |              |
-    |                 |                 |              |
-    -->
-<!--
-**Figure 1a** A is an MLS group member that wishes to pair with device B using a secure one-to-one channel to negotiate a shared random seed.The flag for standard/hidden mode is omitted for space. 
--->
-<!--                                                    Group
-    A                 B            Directory         Channel
-    | ShareRand(B)    |                 |              |
-    +----------------->                 |              |
-    |                 |                 |              |
-    | InitPairing(AB) |                 |              |
-    +-----------------+----------------->              |
-    |                 |                 |              |
-    |                 | InitPairing(AB) |              |
-    |                 +----------------->              |
-    |                 |                 |              |
-    |                 | Accept(pair)    |              |
-    |                 <-----------------+              |
-    <-----------------+-----------------+              |
-    |                 |                 |              |
-    -->
-<!--**Figure 1b** A is an MLS group member that wishes to pair with device B using the existing MLS infrastructure. The flag for standard/hidden mode is omitted for space.
--->
-
-
 ### 3.1 Issuing a Paired Update
 
 Once A and B have been paired, device A can issue an update on behalf of B. A sends the update to the rest of the MLS group as a normal commit. From the perspective of MLS group members not in the pairing this update will be indistinguishable from any other MLS update preformed by A. In hidden mode, updates by either A or B will appear to come from the one device whose signing key is shared. From the passive paired device's perspective, it will need to be notified (either directly or indirectly) to compute the new group key in order to stay in sync with the new group epoch. In standard mode, the DS has the additional task of notifying B of the update. In hidden mode (Fig 2), a notification is sent directly to B via an out-of-band channel. 
