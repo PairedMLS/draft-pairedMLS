@@ -201,9 +201,9 @@ Messages transmitted in the paired MLS extension are those inherited from MLS [1
 * A __CeasePair__ message is sent from a paired device to its paired devices with whom the initiating device wishes to discontinue paired MLS extension. The command is followed by a self remove then group addition. 
 ------
 Optionally, if randomness between paired devices is transmitted online the following commands are additionally utilized:
-* A _ShareRand_ message is sent to negotiate the shared randomness between pairing devices. 
-* A _InitPairing_ message notifies the recipient about devices that wish to pair. The message contains the identities of the pairing devices and a flag for standard or hidden mode operation. If hidden mode is set, the message MUST be sent directly to the target device in a secure one-to-one chanel and MUST contain the signature key pair of the anchor leaf node. If standard mode is set, the recipient MUST be the  directory, and the directory will associate the public signatures of the requesting devices to the anchor node of the initiating device.
-* An _Accept_ message is sent back to the initiator to confirm successful paring. This means that both devices have shared randomness and that signing keys have been provisioned accordingly. 
+* A __ShareRand__ message is sent to negotiate the shared randomness between pairing devices. 
+* A __InitPairing__ message notifies the recipient about devices that wish to pair. The message contains the identities of the pairing devices and a flag for standard or hidden mode operation. If hidden mode is set, the message MUST be sent directly to the target device in a secure one-to-one chanel and MUST contain the signature key pair of the anchor leaf node. If standard mode is set, the recipient MUST be the  directory, and the directory will associate the public signatures of the requesting devices to the anchor node of the initiating device.
+* An __Accept__ message is sent back to the initiator to confirm successful paring. This means that both devices have shared randomness and that signing keys have been provisioned accordingly. 
 
 <!-- * A _Toggle_ message is sent between paired devices to determine who is resposible for MLS updates. -->
 <!-- * _ACK_ messages are returned by the paired device to signify command has been recieved and accepted. __[ToDo]__ dont think this is needed.-->
@@ -212,65 +212,58 @@ Optionally, if randomness between paired devices is transmitted online the follo
 MLS commands such as Remove, GroupInfo KeyPackage and Welcome take the form and are processed as according to RFC9420. 
 
 
-
-<!----------
-__[XT Notes]__
-* It's unclear to me what the difference between the commands and the messages:  _InitiatePCS_ and _enterPairing_; _CeasePCS_ and _exitPairing_; and _toggleUpdateCntrl_ and _Toggle_. 
-* Limited Mode is a use case of our extension, and should not be the name. Maybe we can call it "Paired MLS" or "MLS Paired PCS": we need a name that captures the essence of Guardianship and that stands on it's own to let a reader intuitively understand what it does... "user branches"? haha
------------>
-
 ## 3.1 Example Run of Paired MLS
 
 ### 3.1.1 Negotiate Randomness 
  While we recommend shared randomness be installed into secure hardware in paired devices, we recognize this is not always practical. Therefore, randomness may also be shared via the MLS Delivery Service (DS) (Fig 1a) or an out-of-band secure channel (Fig 1b). The latter case is fairly straight forward. In the former case, Device A initiates the beginning of the Paired MLS extension by first sharing randomness with B and informing the DS of the pairing. The paired device B will then inform the DS that it is ready to run the protocol. After the DS has been informed by both initiator and its paired device an accept reply is returned to both devices. 
 
-                                                 Group
-A                 B            Directory         Channel   
-| ShareRand(B)    |                 |              |   
-+----------------->                 |              |   
-|                 |                 |              |   
-| InitPairing(AB) |                 |              |   
-+-----------------+----------------->              |  
-|                 |                 |              |   
-|                 | InitPairing(AB) |              |   
-|                 +----------------->              |   
-|                 |                 |              |   
-|                 | Accept(pair)    |              |   
-|                 <-----------------+              |   
-<-----------------+-----------------+              |   
-|                 |                 |              |   
-**Figure 1a** A is an MLS group member that wishes to pair with device B using the existing MLS infrastructure.
+                                                    Group
+    A                 B            Directory         Channel
+    | ShareRand(B)    |                 |              |
+    +----------------->                 |              |
+    |                 |                 |              |
+    | InitPairing(AB) |                 |              |
+    +-----------------+----------------->              |
+    |                 |                 |              |
+    |                 | InitPairing(AB) |              |
+    |                 +----------------->              |
+    |                 |                 |              |
+    |                 | Accept(pair)    |              |
+    |                 <-----------------+              |
+    <-----------------+-----------------+              |
+    |                 |                 |              |
+**Figure 1a** A is an MLS group member that wishes to pair with device B using the existing MLS infrastructure. The flag for standard/hidden mode is omitted for space.
 
-                                                 Group
-A                 B            Directory         Channel
-| ShareRand(B)    |                 |              |
-| InitPairing(AB) |                 |              |
-+----------------->                 |              |
-|                 |                 |              |
-| Accept(pair)    |                 |              |
-<-----------------+                 |              |
-|                 |                 |              |
-**Figure 1b** A is an MLS group member that wishes to pair with device B using a secure one-to-one channel to negotiate a shared random seed. 
+                                                    Group
+    A                 B            Directory         Channel
+    | ShareRand(B)    |                 |              |
+    | InitPairing(AB) |                 |              |
+    +----------------->                 |              |
+    |                 |                 |              |
+    | Accept(pair)    |                 |              |
+    <-----------------+                 |              |
+    |                 |                 |              |
+**Figure 1b** A is an MLS group member that wishes to pair with device B using a secure one-to-one channel to negotiate a shared random seed.The flag for standard/hidden mode is omitted for space. 
 
 ### 3.1.2 Updating on Passive Device Behalf
 
 Once A and B have been paired, device A can issue an update on behalf of B. A sends the update to the rest of the MLS group as a normal commit. From the perspective of MLS group members not in the pairing this update will be indistinguishable from any other MLS update preformed by A. In hidden mode, updates by either A or B will appear to come from the one device whose signing key is shared. From the passive paired device's perspective, it will need to be notified (either directly or indirectly) to compute the new group key in order to stay in sync with the new group epoch. In standard mode, the DS has the additional task of notifying B of the update. In hidden mode (Fig 2), a notification is sent directly to B via an out-of-band channel. 
 
-                                                                Group
-A            B              G1  ...    Gn         Directory     Channel
-|Update(B)   |              |          |              |           |
-|Commit(upd) |              |          |              |           |
-+------------+--------------+----------+--------------+----------->
-|Notify(B)   |              |          |              |           |
-+------------>              |          |              |           |
-|            |              |          |              |           |
-|            |              |          |              |Commit(Upd)|
-<------------+--------------+----------+--------------+-----------+
-|            |              |          |              |[Notify(B)]|
-|            <--------------+----------+--------------+-----------+
-|            |              <----------+--------------+-----------+
-|            |              |          <--------------+-----------+
-|            |              |          |              |           |
+                                                                    Group
+    A            B              G1  ...    Gn         Directory     Channel
+    |Update(B)   |              |          |              |           |
+    |Commit(upd) |              |          |              |           |
+    +------------+--------------+----------+--------------+----------->
+    |Notify(B)   |              |          |              |           |
+    +------------>              |          |              |           |
+    |            |              |          |              |           |
+    |            |              |          |              |Commit(Upd)|
+    <------------+--------------+----------+--------------+-----------+
+    |            |              |          |              |[Notify(B)]|
+    |            <--------------+----------+--------------+-----------+
+    |            |              <----------+--------------+-----------+
+    |            |              |          <--------------+-----------+
+    |            |              |          |              |           |
 
 **Figure 2** Paired device A, in hidden mode, updates with a commit on behalf of B to the group. At the same time, device A notifies B to update its group key in order to stay synced with the group. In standard mode, this notification sent to B by the DS is formatted like a commit message. Remaining MLS group members, which are labeled G1, ..., Gn, will receive standard commit messages from the DS. 
 
@@ -286,20 +279,20 @@ To end MLS Paired mode extension either A or B may issue an _CeasePair_ command.
 
 In the following example, A wishes to decouple from B and is the one issuing the removal. 
 
-                                                                Group
-A            B              G1  ...    Gn         Directory     Channel
-|CeasePair() |              |          |              |           |
-+------------>              |          |              |           | 
-| Remove(A)  |              |          |              |           |
-| Commit(Rem)|              |          |              |           |
-+------------+--------------+----------+--------------+----------->
-|            |              |          |              | Remove(A) | 
-|            |              |          |              |Commit(Rem)|
-<------------+--------------+----------+--------------+-----------+
-|            <--------------+----------+--------------+-----------+
-|            |              <----------+--------------+-----------+
-|            |              |          <--------------+-----------+
-|            |              |          |              |           |
+                                                                    Group
+    A            B              G1  ...    Gn         Directory     Channel
+    |CeasePair() |              |          |              |           |
+    +------------>              |          |              |           | 
+    | Remove(A)  |              |          |              |           |
+    | Commit(Rem)|              |          |              |           |
+    +------------+--------------+----------+--------------+----------->
+    |            |              |          |              | Remove(A) | 
+    |            |              |          |              |Commit(Rem)|
+    <------------+--------------+----------+--------------+-----------+
+    |            <--------------+----------+--------------+-----------+
+    |            |              <----------+--------------+-----------+
+    |            |              |          <--------------+-----------+
+    |            |              |          |              |           |
 **Figure 3** Paired device A wants to exit the PairedMLS extension with B and leave the group. It first notifies B via CeasePair() and then it commits a self-remove(). A may rejoin the group but must join using new signing keys. 
 
 <!--**[TODO]** Add diagrams of how the protocol is initiated and what messages are sent - use https://asciiflow.com/-->
@@ -367,7 +360,7 @@ Generally, the security of this extension is based upon the security of the out-
 # 5. Operational Modes
 
 ## 5.1 Standard Mode
-
+In standard mode, pairing is transparent to the the directory and group members. The paired devices share an anchor node which may or may not be a MLS Leaf Node. 
 ### 5.1.1. Message Content
 
 ## 5.1 Hidden Mode 
