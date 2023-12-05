@@ -170,7 +170,7 @@ TODO:
 
 # 2. Introduction
 
-___Paired MLS___ allows a trusted device to update the security parameters of another group member. The trusted paired device can be added to the group or can be another existing group member. The ___Paired MLS___ extension builds upon MLS (see [1]. This document makes describes for two operational modes of the ___Paired MLS___ extension; interested readers can learn about other cases that were evaluated at [FHX23]. 
+___Paired MLS___ allows a trusted device to update the security parameters of another group member. The trusted paired device can be added to the group or can be another existing group member. The ___Paired MLS___ extension builds upon MLS (see [1]. This document presents two operational modes for the ___Paired MLS___ extension; interested readers can learn about other cases that were evaluated at [FHX23]. 
 
 The ___Paired MLS___ extension describes a standard case where each device possesses its own signature key. To enable the standard ___Paired MLS___ extension, the MLS anchor node must accommodate being shared by at least two devices. If the anchor node is an MLS leaf node, this means that the leaf node would store at least two sets of signature keys. 
 An additional operational mode is described, *Hidden* mode, where the paired devices share a signing key and the paired device is able to issue digital signatures on behalf of the partner device in addition to PCS updates. Caveats to the Hidden mode are discussed further under ___Security Considerations___. 
