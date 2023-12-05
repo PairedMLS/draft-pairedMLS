@@ -183,7 +183,7 @@ An additional operational mode is described, *Hidden* mode, where the paired dev
 
 The extension assumes the use of the MLS protocol where the device that desires to execute the extension is already an MLS group member and thus has access to an MLS leaf node. The group member initiating this extension MUST first negotiate the shared randomness with the device it will pair with: this SHOULD be done via secure hardware and MAY be done through an out-of-band, one-to-one channel. This extension assumes that the randomness is stored securely, similarly to signature private keys.
 
-Signature key management determines whether the extension is used in the standard mode or with hidden mode. 
+Signature key management determines whether the extension is used in standard mode or with hidden mode. 
 In standard mode, both of the paired devices must have their own signing keys, distinct from the anchor. This is the case whether the paired devices are both MLS group members with their distinct leaf nodes, or if the anchor node is an MLS group member leaf node. In the latter case, the extension would require the ability to associate multiple signature public keys to a leaf node. 
 In hidden mode, the paired devices may use the anchor's signing key, thus obfuscating the actions of the individual devices. The private signing key MAY be shared among the paired devices offline or out-of-band. 
 
