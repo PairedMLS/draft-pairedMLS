@@ -314,7 +314,7 @@ Two (or more) devices pair with one another by sharing randomness via a secure o
 -->
 
 # 4. Security Considerations
-The goal of the MLS extension is to reduce the security risk that having group members that are unable to update, or updates to seldomly, presents. The extension allows other MLS group member, or other additional devicses to the absent user to update on its behalf. This section presents how the extension acheives this goal.
+The goal of the MLS extension is to reduce the security risk that having group members that are unable to update, or updates to seldomly, presents. The extension allows other MLS group members, or other additional devices, to update on passive group members behalf. This section presents how the extension acheives this goal.
 
 
 ## 4.1 Transport Security 
