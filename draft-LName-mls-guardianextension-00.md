@@ -38,7 +38,7 @@ normative:
 
 informative:
 
----
+---abstract
 
 # Done since last major commit
 
@@ -217,7 +217,7 @@ MLS commands such as Remove, GroupInfo KeyPackage and Welcome take the form and 
 
 ## 3.1 Example Run of Paired MLS
 
-### 3.1.1 Negotiate Pairing
+### 3.1.1 Negotiate Randomness 
 While shared randomness enables pairing, the signaling of a paired update may have various degree of transparency to the other group members. Signaling of pairing may be done via the MLS Delivery Service (DS) (Fig 1a) or an out-of-band channel (Fig 1b). The latter case is fairly straight forward, in that either of the paired devices informs the other that PCS updates using the shared randomness will be performed. In the former case, Device Am in possession of shared randomness with B, initiates the beginning of the Paired MLS extension by informing the DS of the pairing. The paired device B will then inform the DS that it is ready to run the protocol. After the DS has been informed by both initiator and its paired device an accept reply is returned to both devices. 
 
                                                     Group
@@ -363,7 +363,7 @@ Generally, the security of this extension is based upon the security of the out-
 # 5. Operational Modes
 
 ## 5.1 Standard Mode
-In standard mode, pairing is transparent to the the directory and group members. The paired devices share an anchor node which may or may not be a MLS Leaf Node. 
+In standard mode, pairing is transparent to the the directory and group members. The paired devices share an anchor node which may or may not be a MLS Leaf Node. If both devices are sharing one MLS leaf node as their anchor, the directory will need to associate the signature keys of both devices to that leaf node. Message sending and group operations will be able to be performed by either paired devices but will be distinguishable by the signature on the commit. When terminating Standard Paired MLS, the device wishing to exit pairing will notify the other device which MUST stop using the shared randomness and shared anchor. To ensure this, the exiting device will also issue a self-remove which prevents B from updating their shared anchor node. 
 ### 5.1.1. Message Content
 
 ## 5.1 Hidden Mode 
@@ -393,8 +393,8 @@ This operational mode is applicable when a user wants to explicitly announce tha
 # 6. Extension Requirements to MLS
 
 ## 6.1 Leaf Node Contents
-<!--
 The MLS leaf node will need to support multiple signature keys for the public guardian. The leaf node content is modified by changing `signature_key` to a vector of `SignaturePublicKey`. 
+<!--
 
     struct {
         HPKEPublicKey encryption_key;
