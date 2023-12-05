@@ -258,7 +258,7 @@ A                 B            Directory         Channel
 
 ### 3.1.2 Updating on Passive Device Behalf
 
-Once A and B have been paired, device A can issue an update on behalf of B. A sends the update to the rest of the MLS group as a normal commit. From the perspective of MLS group members not in the pairing this update will be indistinguishable from any other MLS update preformed by A: in the hidden mode, updates by either A or B will appear to come from the one device whose signing key is shared. From the passive paired device's perspective, it will need to be notified (either directly or indirectly) to compute the new group key in order to stay in sync with the new group epoch. In standard mode, the DS has the additional task of notifying B of the update. In hidden mode (Fig 2), a notification is sent directly to B via an out-of-band channel. 
+Once A and B have been paired, device A can issue an update on behalf of B. A sends the update to the rest of the MLS group as a normal commit. From the perspective of MLS group members not in the pairing this update will be indistinguishable from any other MLS update preformed by A. In hidden mode, updates by either A or B will appear to come from the one device whose signing key is shared. From the passive paired device's perspective, it will need to be notified (either directly or indirectly) to compute the new group key in order to stay in sync with the new group epoch. In standard mode, the DS has the additional task of notifying B of the update. In hidden mode (Fig 2), a notification is sent directly to B via an out-of-band channel. 
 
                                                                 Group
 A            B              G1  ...    Gn         Directory     Channel
