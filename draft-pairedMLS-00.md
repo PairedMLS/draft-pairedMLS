@@ -92,9 +92,7 @@ This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relatin
 2. Introduction
 3. Extension Execution
 4. Security Considerations 
-    Restrictions for users, storage, and random tape sharing
-    Anonymous Mode
-5.  Operational Modes   
+5. Operational Modes   
 7. Extension Requirements to MLS 
 8. IANA Considerations
 9. Acknowledgements 
@@ -399,7 +397,7 @@ Barnes, R., Beurdouche, B., Robert, R., Millican, J., Omara, E., and K. Cohn-Gor
 ## Informational References 
 [FHX23] E. M. Fondevik, B. Hale, and X. Tian. "Guardianship in Group Key Exchange for Limited Environments". Cryptology ePrint Archive, Paper 2023/1761. 11 November 2023. <https://eprint.iacr.org/2023/1761>
 
-# Appendices 
+<!--# Appendices -->
 
 
 # Acknowledgments
