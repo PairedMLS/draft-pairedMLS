@@ -237,21 +237,21 @@ In hidden mode, an out-of-band cease pairing request can similarly be issued, bu
 -->
 
 # 4. Security Considerations
-The goal of the MLS extension is to reduce the security risk that having group members that are unable to update, or updates to seldomly, presents. The extension allows other MLS group member, or other additional devicses to the absent user to update on its behalf. This section presents how the extension acheives this goal.
+The goal of the MLS extension is to reduce the PCS security risk in cases when group members are unable to update, or updates are seldom. The extension allows other MLS group member devices, or other additional devicses belonging to the same user to update on the passive device's behalf. The structure of a shared anchor node in the MLS tree and various devices under that in a subtree can be attractive for practical operational reasons, and the hidden mode could further allow a user to have multiple devices listed under their user identity leaf node; however there are security caveats to exploiting such structures and we will summarize trade-offs here.
 
 
 ## 4.1 Transport Security 
 Recommendations for preventing denial of service (DoS) attacks, or restricting transmitted messages are inherited from MLS. Furthermore, message integrity and confidentiality is, as for MLS, protected. 
-
+<!--
 An adversary that can observe network traffic will be able to discern group membership. The MLS packets for the extension are designed to be indistinguishable from regular MLS packets for anyone but the paired devices. As such, a network observer should not be able to determine which devices are paired based solely on packet analysis, however, since paired devices communicate using a separate channel, a network observer might be able to discern general communication from pairing by observing timing and frequency. To prevent the separated communication form leaking information directly, this channel MUST be encrypted. We RECOMMEND using a TLS connection as a minimum.
 
 
 ## 4.2 Security of Shared Randomness
 If the shared randomness between paired devices is leaked then any entity in possession of this information will be able to generate the group session key when either of the devices update on behalf of the other. As such, the shared randomness MUST be stored, securely and encrypted on all applicable end devices when not in use. Furthermore, we strongly RECOMMEND that the random seeds are loaded offline through hardware. If this is not possible a secure, and encrypted channel MUST by utilized to negotiate, or distribute the randomness.   
-
+-->
 
 ## 4.3 Post Compromise Security and Forward Secrecy
-The main goal of the extension is to reduce epoch sizes when a group member is unable to update. A full security analysis pertaining PCS and FS can be found in [FHX23]. If the extension is not utilized or if paired devices are simultaneously unable to update, FS and PCS security is reduced to that of the original underlying MLS protocol. 
+The main goal of the extension is to reduce epoch sizes when a group member is unable to update. A full security analysis pertaining PCS and FS can be found in [FHX23]. If the extension is not utilized or if paired devices are simultaneously unable to update, FS and PCS security is reduced to that of the original underlying MLS protocol. The PCS benefits from active device updates are contingent on how the shared randomness is stored; if the passive device stores the shared randomness in active memory with other MLS state, then the PCS benefits cannot be assumed. Instead, the shared randomness MUST be stored more securely as with the signature private keys. Furthermore, we strongly RECOMMEND that the random seeds are loaded offline through hardware. If this is not possible, then the out-of-band one-to-one channel utilized to negotiate or distribute the randomness is critical to the security benefits; compromise of that negotiation or distribution reduces the PCS guarantees to that of MLS in RFC4920 [1].   
 
 ## 4.4 Discontinuation of Pairings
 **[Todo] currently operating under a single paired device. If multiple all need to be removed and then re-added later.**
