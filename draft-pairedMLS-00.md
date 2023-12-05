@@ -184,7 +184,8 @@ Messages transmitted in the Paired MLS extension are those inherited from MLS [1
 * -->
 * If an __Update__ message is sent by A, such that A is an active device and is sending an update on behalf of B, then A computes the update as in MLS except for the KEM to B. Instead of the KEM for B, A computes the *Notify* message.
 <!--
-* A __CeasePair__ message is sent from a paired device to its paired devices with whom the initiating device wishes to discontinue paired MLS extension. The command is followed by a self remove then group addition. 
+* A __CeasePair__ message is sent from a paired device to its paired devices with whom the initiating device wishes to discontinue paired MLS extension. The command is followed by a self remove then group addition.
+
 ------
 Optionally, if randomness between paired devices is transmitted online the following commands are additionally utilized:
 * A _ShareRand_ message is sent to negotiate the shared randomness between pairing devices. 
@@ -226,34 +227,13 @@ Remaining MLS group members, which are labeled G1, ..., Gn, will receive the sta
 If any other MLS group member sends proposals or commits to the paired devices the process will follow the flow as defined in RFC9420 [1].
 
 
-### 3.1.3 Teminate Pairing 
-To end MLS Paired mode extension either A or B may issue an _CeasePair_ command. This command notifies the other device to stop using the shared randomness and paired signature key(s). The requesting device will issue a self-remove commitment to the group. After the commit is processed by the group, B can no longer issue updates or commits on behalf of A. In Hidden Mode, this removes the anchor leaf node which effectively removes both devices. In order to resume the standard MLS group session, Device A rejoins the group with new signing keys associated to her identity. In Hidden Mode, B will need to rejoin the group using its own signing keys if it desires to continue communicating with the group. 
-
-
-In the following example, A wishes to decouple from B and is the one issuing the removal. 
-
-                                                                    Group
-    A            B              G1  ...    Gn         Directory     Channel
-    |CeasePair() |              |          |              |           |
-    +------------>              |          |              |           | 
-    | Remove(A)  |              |          |              |           |
-    | Commit(Rem)|              |          |              |           |
-    +------------+--------------+----------+--------------+----------->
-    |            |              |          |              | Remove(A) | 
-    |            |              |          |              |Commit(Rem)|
-    <------------+--------------+----------+--------------+-----------+
-    |            <--------------+----------+--------------+-----------+
-    |            |              <----------+--------------+-----------+
-    |            |              |          <--------------+-----------+
-    |            |              |          |              |           |
-**Figure 3** Paired device A wants to exit the PairedMLS extension with B and leave the group. It first notifies B via CeasePair() and then it commits a self-remove(). A may rejoin the group but must join using new signing keys. 
-
-<!--**[TODO]** Add diagrams of how the protocol is initiated and what messages are sent - use https://asciiflow.com/-->
-
+### 3.1.3 Terminate Pairing 
+To end Paired MLS extension, either A or B may issue an out-of-band request to its paired device to cease paring. This request notifies the other device to stop using the shared randomness to update on the other's behalf. In standard mode, pairing termination can be enforced through a self-remove and re-add to the group.  
+In hidden mode, an out-of-band cease pairing request can similarly be issued, but enforcing the termination is more challenging since removing either device is opaque to the MLS given the shared signature key. This will be discussed further under Security Considerations. It is possible, however, to enforce termination of the pairing and hidden mode by removing both devices and re-adding under separate signature keys.
 
 <!--
 ## 3.2 Shared Random Tape
-Two (or more) devices pair with one another by sharing randomness via a secure out-of-band channel. Once the devices share a random tape, their group key updates are synchronized through the paired device making an update to the MLS group via the anchor node and notifying the passive device to ratchet it's own key forward. **[TODO]** specify how to use a puncturable PRF to ensure the notification to ratchet the key can't be replayed or forged by an adversary. Since the devices share a random tape, their key derivation function will yield the same pseudorandom keys. 
+ **[TODO]** specify how to use a puncturable PRF to ensure the notification to ratchet the key can't be replayed or forged by an adversary. Since the devices share a random tape, their key derivation function will yield the same pseudorandom keys. 
 -->
 
 # 4. Security Considerations
