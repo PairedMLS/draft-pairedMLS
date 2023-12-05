@@ -201,9 +201,9 @@ Messages transmitted in the paired MLS extension are those inherited from MLS [1
 * A __CeasePair__ message is sent from a paired device to its paired devices with whom the initiating device wishes to discontinue paired MLS extension. The command is followed by a self remove then group addition. 
 ------
 Optionally, if randomness between paired devices is transmitted online the following commands are additionally utilized:
-* A _ShareRand_ message is sent between MLS leaf node to initiate the paired MLS extension. 
-* A _InitPairing_ message is used to notify the the directory that a device wishes to pair with another. 
-* An _Accept_ message confirms that pairing has been registered by the directory. 
+* A _ShareRand_ message is sent to negotiate the shared randomness between pairing devices. 
+* A _InitPairing_ message notifies the recipient about devices that wish to pair. The message contains the identities of the pairing devices and a flag for standard or hidden mode operation. If hidden mode is set, the message MUST be sent directly to the target device in a secure one-to-one chanel and MUST contain the signature key pair of the anchor leaf node. If standard mode is set, the recipient MUST be the  directory, and the directory will associate the public signatures of the requesting devices to the anchor node of the initiating device.
+* An _Accept_ message is sent back to the initiator to confirm successful paring. This means that both devices have shared randomness and that signing keys have been provisioned accordingly. 
 
 <!-- * A _Toggle_ message is sent between paired devices to determine who is resposible for MLS updates. -->
 <!-- * _ACK_ messages are returned by the paired device to signify command has been recieved and accepted. __[ToDo]__ dont think this is needed.-->
@@ -244,9 +244,9 @@ A                 B            Directory         Channel
                                                  Group
 A                 B            Directory         Channel
 | ShareRand(B)    |                 |              |
+| InitPairing(AB) |                 |              |
 +----------------->                 |              |
 |                 |                 |              |
-| InitPairing(AB) |                 |              |
 | Accept(pair)    |                 |              |
 <-----------------+                 |              |
 |                 |                 |              |
