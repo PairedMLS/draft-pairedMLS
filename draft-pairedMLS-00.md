@@ -159,7 +159,7 @@ An additional operational mode is described, *Hidden* mode, where the paired dev
 <!-- Paired MLS is an extension of MLS, as found in [1], per user, i.e. per MLS leaf node. Meaning that each MLS leaf node itself MAY decide whether it wishes to run the extension. This extension comes in two variantions, one where all group members are aware that an MLS node uses the extension and one where the usage is opaque to the remaining MLS group members.   
 -->
 
-The extension assumes the use of the MLS protocol where the device that desires to execute the extension is already an MLS group member and thus has access to an MLS leaf node. The group member initiating this extension MUST first negotiate the shared randomness with the device it will pair with: this SHOULD be done via secure hardware and MAY be done through an out-of-band, one-to-one channel. This extension assumes that the randomness is stored securely, similarly to signature private keys.
+The extension assumes the use of the MLS protocol where the device that desires to execute the extension is already an MLS group member and thus has access to an MLS leaf node. The group member initiating this extension MUST first negotiate the shared randomness with the device it will pair with: this SHOULD be done via secure hardware and MAY be done through an out-of-band, 1-to-1 channel. This extension assumes that the randomness is stored securely, similarly to signature private keys.
 
 Signature key management determines whether the extension is used in standard mode or with hidden mode. 
 In standard mode, both of the paired devices must have their own signing keys, distinct from the anchor. This is the case whether the paired devices are both MLS group members with their distinct leaf nodes, or if the anchor node is an MLS group member leaf node. In the latter case, the extension would require the ability to associate multiple signature public keys to a leaf node. 
@@ -189,7 +189,7 @@ Messages transmitted in the Paired MLS extension are those inherited from MLS [1
 ------
 Optionally, if randomness between paired devices is transmitted online the following commands are additionally utilized:
 * A _ShareRand_ message is sent to negotiate the shared randomness between pairing devices. 
-* A _InitPairing_ message notifies the recipient about devices that wish to pair. The message contains the identities of the pairing devices and a flag for standard or hidden mode operation. If hidden mode is set, the message MUST be sent directly to the target device in a secure one-to-one chanel and MUST contain the signature key pair of the anchor leaf node. If standard mode is set, the recipient MUST be the  directory, and the directory will associate the public signatures of the requesting devices to the anchor node of the initiating device.
+* A _InitPairing_ message notifies the recipient about devices that wish to pair. The message contains the identities of the pairing devices and a flag for standard or hidden mode operation. If hidden mode is set, the message MUST be sent directly to the target device in a secure 1-to-1 chanel and MUST contain the signature key pair of the anchor leaf node. If standard mode is set, the recipient MUST be the  directory, and the directory will associate the public signatures of the requesting devices to the anchor node of the initiating device.
 * An _Accept_ message is sent back to the initiator to confirm successful paring. This means that both devices have shared randomness and that signing keys have been provisioned accordingly. 
 -->
 
@@ -251,7 +251,7 @@ If the shared randomness between paired devices is leaked then any entity in pos
 -->
 
 ## 4.3 Post Compromise Security and Forward Secrecy
-The main goal of the extension is to reduce epoch sizes when a group member is unable to update. A full security analysis pertaining PCS and FS can be found in [FHX23]. If the extension is not utilized or if paired devices are simultaneously unable to update, FS and PCS security is reduced to that of the original underlying MLS protocol. The PCS benefits from active device updates are contingent on how the shared randomness is stored; if the passive device stores the shared randomness in active memory with other MLS state, then the PCS benefits cannot be assumed. Instead, the shared randomness MUST be stored more securely as with the signature private keys. Furthermore, we strongly RECOMMEND that the random seeds are loaded offline through hardware. If this is not possible, then the out-of-band one-to-one channel utilized to negotiate or distribute the randomness is critical to the security benefits; compromise of that negotiation or distribution reduces the PCS guarantees to that of RFC4920 [1].   
+The main goal of the extension is to reduce epoch sizes when a group member is unable to update. A full security analysis pertaining PCS and FS can be found in [FHX23]. If the extension is not utilized or if paired devices are simultaneously unable to update, FS and PCS security is reduced to that of the original underlying MLS protocol. The PCS benefits from active device updates are contingent on how the shared randomness is stored; if the passive device stores the shared randomness in active memory with other MLS state, then the PCS benefits cannot be assumed. Instead, the shared randomness MUST be stored more securely as with the signature private keys. Furthermore, we strongly RECOMMEND that the random seeds are loaded offline through hardware. If this is not possible, then the out-of-band 1-to-1 channel utilized to negotiate or distribute the randomness is critical to the security benefits; compromise of that negotiation or distribution reduces the PCS guarantees to that of RFC4920 [1].   
 
 
 ## 4.4 Discontinuation of Pairings
@@ -340,14 +340,15 @@ The MLS leaf node will need to support multiple signature keys for the public gu
     } LeafNode;
 -->
 
-
+<!--
 ## 6.2 Shared Randomness Establishment
-The security of this extension is based upon the security of the out-of-band channel to used to establish shared randomness. In other words, if an adversary is granted access to the shared randomness, then the MLS group security is broken irrevocably as PCS could never be recovered except via removal. Therefore, we RECOMMEND the shared-randomness be installed via protected hardware in the same way that long-term signing keys stored such that it is infeasible to be accessed by an adversary. The shared-randomness MAY be shared via a secure 1-to-1 channel such as a key encapsulation mechanism between the devices. 
+The security of this extension is based upon the security of the out-of-band channel to used to establish shared randomness. We RECOMMEND the shared-randomness be installed via protected hardware in the same way that long-term signing keys stored such that it is infeasible to be accessed by an adversary. The shared-randomness MAY be shared via a secure 1-to-1 channel such as a key encapsulation mechanism between the devices. 
 
 ## 6.3  Notifications Between Paired Devices
 The notification message sent to the passive device to forward ratchet its group key must be secured from forgery and replay attacks. If an attacker were able to to prompt either devices to update, then they would fall out-of-sync and be unable to decrypt future group messages. 
 
 ## 6.4 Multiple Signature Keys per MLS NODE
+-->
 
 # IANA Considerations 
 **[TODO]** Determine an extension code to use
