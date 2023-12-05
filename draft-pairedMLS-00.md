@@ -262,19 +262,20 @@ Termination of pairing can be signaled as described above; in standard extension
 In hidden mode, where devices share a signature key, termination of pairing requires removal and re-addition of both devices, such that they are registered with separate signature keys. It is not possible to remove only one device, as any removed device will maintain access to the signature private key in the group. 
 
 
-## 4.5 Impersonation
+## 4.5 Impersonation to the Group
 In Paired MLS standard mode, distinct signing keys are used by the main device and its paired device when issuing an update. Impersonation of other MLS group members is therefore not feasible given that the signature public keys are known. 
 
 In hidden mode, a single signing key is used by all paired devices. This could allow one or more paired devices to be opaque to the MLS group, which inhibits the MLS goals of transparency of group membership but supports possible user side goals of limiting tracking (e.g., if Alice possesses multiple devices that are group members). Thus, devices using the Paired MLS extension in hidden mode MUST be associated with the same group membership user identity, i.e., the paired devices may all belong to Alice but they should not belong to separate users Alice and Bob. 
+
+Without the ability to interrogate the delivery service for anonymous hidden pairings, compromised or malicious paired devices may eavesdrop undetected in hidden mode. If a group key is leaked somehow, PCS can be achieved through an update by either of the paired devices. However, if the shared randomness source is compromised on one device, then both devices are irrevocably compromised as the attacker could duplicate generation of the update secrets used on either device. Similarly, the shared signature key in hidden mode means that it is impossible to remove a hidden device member and a hidden member can easily start new groups, impersonating other members; this is similar to signature key compromise in MLS [CHK21]. It is for these reasons that it is required that hidden mode is only used for devices associated with the same MLS user.
+
  
 ## 4.6 Visability of paired devices to Delivery Service
-The detection of the active/passive status of the paired devices to the rest of the group is possible in standard mode, but the detection of pairing is not. Thus other group members may see that device A has updated frequently without knowing that it is on behalf of B.  Standard mode is distinguished by the use of distinct signature keys by paired devices to issue signed updates to the group. This implies that the anchoring node holds a signature key for each of the devices sharing it. 
+The detection of the active/passive status of the paired devices to the rest of the group is possible in standard mode, but the detection of pairing is not. Thus other group members may see that device A has updated frequently without knowing that it is on behalf of B.  This is because standard mode uses distinct signature keys for each device to issue signed updates to the group. 
 
-## 4.7 Eavesdropping 
-Without the ability to interrogate the delivery service for anonymous hidden pairings, compromised or malicious paired devices may eavesdrop undetected in hidden mode. If a group key is leaked somehow, PCS can be achieved through an update by either of the paired devices. However, if the shared randomness is compromised on one device, then both devices are irrevocably compromised as the attacker could generate new secrets used to generate group keys. 
+**TODO** If there is a consideration that the lack of pairing awareness in the group may result in a devices ejection from the group, it is possible to signal to the group that devices are paired and updates have been performed on behalf of B.
 
-
-
+In hidden mode, the DS is still aware of the devices A and B but may not be aware of the pairing status. The anchoring node's signature key is used by both devices, but whether or not they possess shared randomness to perform updates on the behalf of the other is not known to the DS. 
 
 ----------------
 
@@ -378,6 +379,9 @@ Barnes, R., Beurdouche, B., Robert, R., Millican, J., Omara, E., and K. Cohn-Gor
 
 ## Informational References 
 [FHX23] E. M. Fondevik, B. Hale, and X. Tian. "Guardianship in Group Key Exchange for Limited Environments". Cryptology ePrint Archive, Paper 2023/1761. 11 November 2023. <https://eprint.iacr.org/2023/1761>
+
+[CHK21] C. Cremers, B. Hale, K. Kohbrok. "The Complexities of Healing in Secure Group Messaging: Why Cross-Group Effects Matter". USENIX Security Symposium 2021: 1847-1864
+
 
 <!--# Appendices -->
 
