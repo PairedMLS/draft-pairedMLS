@@ -225,20 +225,20 @@ __[XT Notes]__
  While we recommend shared randomness be installed into secure hardware in paired devices, we recognize this is not always practical. Therefore, randomness may also be shared via the MLS Delivery Service (DS) (Fig 1a) or an out-of-band secure channel (Fig 1b). The latter case is fairly straight forward. In the former case, Device A initiates the beginning of the Paired MLS extension by first sharing randomness with B and informing the DS of the pairing. The paired device B will then inform the DS that it is ready to run the protocol. After the DS has been informed by both initiator and its paired device an accept reply is returned to both devices. 
 
                                                  Group
-A                 B            Directory         Channel \\
-| ShareRand(B)    |                 |              | \\
-+----------------->                 |              | \\
-|                 |                 |              | \\
-| InitPairing(AB) |                 |              | \\
-+-----------------+----------------->              | \\
-|                 |                 |              | \\ 
-|                 | InitPairing(AB) |              | \\
-|                 +----------------->              | \\
-|                 |                 |              | \\ 
-|                 | Accept(pair)    |              | \\
-|                 <-----------------+              | \\
-<-----------------+-----------------+              | \\
-|                 |                 |              | \\
+A                 B            Directory         Channel   
+| ShareRand(B)    |                 |              |   
++----------------->                 |              |   
+|                 |                 |              |   
+| InitPairing(AB) |                 |              |   
++-----------------+----------------->              |  
+|                 |                 |              |   
+|                 | InitPairing(AB) |              |   
+|                 +----------------->              |   
+|                 |                 |              |   
+|                 | Accept(pair)    |              |   
+|                 <-----------------+              |   
+<-----------------+-----------------+              |   
+|                 |                 |              |   
 **Figure 1a** A is an MLS group member that wishes to pair with device B using the existing MLS infrastructure.
 
                                                  Group
