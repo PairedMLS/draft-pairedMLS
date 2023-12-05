@@ -118,7 +118,7 @@ _Active Device_: An active device is another user equipment device designated to
 
 Paired devices may switch roles between active and passive. Also a device may be paired with multiple others, such that it can issue updates on behalf of several paired passive devices.
 
-_Anchor_:  The MLS node that acts as a shared access node between the paired and passive device is called an anchor. The anchor can be a leaf node of a group member, where the paired devices both have access to the leaf node information but our nominally outside of the MLS tree. The anchor can also be a shared intermediate node on the path to the root of an MLS tree, and as such the the anchor may be shared with multiple only MLS members in addition to the paired devices. 
+_Anchor_:  The MLS node that acts as a shared access node between the paired and passive device is called an anchor. The anchor can be a leaf node of a group member, where the paired devices both have access to the leaf node information but our nominally outside of the MLS tree. The anchor can also be a shared intermediate node on the path to the root of an MLS tree, and as such the the anchor may be shared with multiple only MLS members in addition to the paired devices. Any MLS members that share the anchor node in their parent tree MUST be paired.
 
 <!-- 
 _passive Device Operational Modes_
@@ -167,7 +167,7 @@ TODO:
 
 ___Paired MLS___ allows a trusted device to update the security parameters of an another group member. The trusted paired device can be added to the group or can be another existing group member. The ___Paired MLS___ extension builds upon MLS (see [1]. This document makes describes for two operational modes of the ___Paired MLS___ extension; interested readers can learn about other cases that were evaluated at [FHX23]. 
 
-The ___Paired MLS___ extension describes a standard case where each device possesses its own signature key. To enable the standard ___Paired MLS___ extension, the MLS leaf node must accommodate being shared by at least two devices. This means that the leaf node would store at least two sets of signature keys. 
+The ___Paired MLS___ extension describes a standard case where each device possesses its own signature key. To enable the standard ___Paired MLS___ extension, the MLS anchor node must accommodate being shared by at least two devices. If the anchor node is an MLS leaf node, this means that the leaf node would store at least two sets of signature keys. 
 An additional operational mode is described, *Anonymous* mode, where the paired devices share a signing key and the paired device is able to issue digital signatures on behalf of the partner device in addition to PCS updates. Caveats to the Anonymous mode are discussed further under ___Security Considerations___. 
 
 
@@ -176,9 +176,10 @@ An additional operational mode is described, *Anonymous* mode, where the paired 
 <!-- Paired MLS is an extension of MLS, as found in [1], per user, i.e. per MLS leaf node. Meaning that each MLS leaf node itself MAY decide whether it wishes to run the extension. This extension comes in two variantions, one where all group members are aware that an MLS node uses the extension and one where the usage is opaque to the remaining MLS group members.   
 -->
 
-Independent of version selected the execution of the extension assumes the existence of a MLS protocol where the device that desires to execute the extension is already a member, and thus has access to an MLS leaf node. The group member initiating this extension must first negotiate the shared randomness with another device: this SHOULD be done via secure hardware and MAY be done through a secure one-to-one channel. 
+The extension assumes the use of the MLS protocol where the device that desires to execute the extension is already an MLS group member and thus has access to an MLS leaf node. The group member initiating this extension must first negotiate the shared randomness with the device it will pair with: this SHOULD be done via secure hardware and MAY be done through an out-of-band, one-to-one channel. This extension assumes that the randomness is stored securely, similarly to signature private keys.
 
-After the shared randomness is established, the devices are "paired" and either device may update on the other's behalf. When the active device issues an update to the group on behalf of the passive device it will also issue a notification to the passive device to ratchet forward its group key. This ensures the passive device stays synched with the group epoch so it can process updates and commits made by other group members. To protect the privacy of the paired devices, this notification message must be discretely sent using either an out-of-band secure chanel or an MLS Private Message when sent by the common DS. 
+After the shared randomness is established, the devices are considered "paired" and either device may update on the other's behalf. When the active device issues an update to the group on behalf of the passive device, it will also issue a *NOTIF* notification message to the passive device to ratchet forward its group key. This ensures the passive device stays synchronized with the group epoch so it can process updates and commits made by other group members. This notification message is sent in place of a normal update to the paired device, i.e., such that the *NOTIF* message does not contain secret keying material.
+To protect the privacy of the paired devices, this notification message is formatted similarly to the update message, so that the distinction between the two is opaque to the DS.
 
 <!--
 Important; once a device has initiated the use of Paired MLS mode, the original MLS commands become obsolete for the specified MLS leaf node, instead the following commands take precedence. 
