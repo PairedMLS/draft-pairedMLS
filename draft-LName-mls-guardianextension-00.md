@@ -49,9 +49,9 @@ informative:
 
 # TODOs
 - Specify the format of the notification message: Public Message vs Private Message trade offs. 
-- How to more efficiently terminate PairedMLS without relying on being re-added to the group. Is there a way to self-remove and then self-add?
-- Double-check the new diagrams (all have been updated). 
-- Organizationally create Hidden Mode and Standard Mode sections
+- How to more efficiently terminate PairedMLS without relying on being re-added to the group. Is there a way to self-remove and then self-add? (think this can be todo for later)
+- Double-check the new diagrams (all have been updated).  (done)
+- Organizationally create Hidden Mode and Standard Mode sections (done)
 - Token passing option. 
 
 
