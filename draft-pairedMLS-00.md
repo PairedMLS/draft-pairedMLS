@@ -64,11 +64,11 @@ This document describes the Paired Messaging Layer Security (MLS) extension that
 
 This note is to be removed before publishing as an RFC.
 
-Status information for this document may be found at https://datatracker.ietf.org/doc/draft-LName-mls-guardianexension/.
+Status information for this document may be found at *[Todo]*.
 
 Discussion of this document takes place on the MLS Working Group mailing list (mailto:mls@ietf.org), which is archived at https://mailarchive.ietf.org/arch/browse/mls/.  Subscribe at https://www.ietf.org/mailman/listinfo/mls/.
 
-Source for this draft and an issue tracker can be found at https://github.com/emmestl/draft-guardian-protocol.
+Source for this draft and an issue tracker can be found at https://github.com/PairedMLS/draft-pairedMLS.
 
 # Status of this Memo 
 This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.
