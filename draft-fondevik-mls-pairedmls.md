@@ -1,64 +1,72 @@
 ---
-
-title: "PCS in Limited Modes"
-#abbrev: "TODO - Abbreviation"
+title: Paired MLS - PCS in Limited Modes
+abbrev: PMLS
+docname: draft-fondevik-mls-pairedmls-00
 category: info
 
-docname: draft-LName-mls-guardianextension-00
-submissiontype: IETF  # also: "independent", "editorial", "IAB", or "IRTF"
-number:00
-date:
-consensus: true
-v: 3
-area: AREA
-workgroup: MLS
-keyword:
- - MLS
-venue:
-  group: MLS
-  type: Working Group
-  mail: WG@example.com
-  arch: https://example.com/WG
-  github: USER/REPO
-  latest: https://example.com/LATEST
+ipr: trust200902
+area: Security
+keyword: 
+  - security
+  - authenticated key exchange
+  - PCS
 
+stand_alone: yes
+pi: [toc, sortrefs, symrefs]
+
+#number: 
+#date: 2023-12-11
+#consensus: true
+#v: 1
+workgroup: MLS
+
+#venue:
+#  group: MLS
+#  type: "Working Group"
+#  mail: WG@example.com
+#  arch: https://example.com/WG
+#  github: https://github.com/PairedMLS/draft-pairedMLS
+#  latest: https://example.com/LATEST
 author:
- -  fullname: Elsie Fondevik 
-    organization: Kongsberg Defense & Aerospace
+  - ins: "E. Fondevik"
+    name: "Elsie Fondevik"
+    organization: "Kongsberg Defense & Aerospace"
     email: elsie.fondevik@kongsberg.com
--   fullname: Britta Hale
-    organization: Naval Postgraduate School
+  - ins: "B. Hale"
+    name: "Britta Hale"
+    organization: "Naval Postgraduate School"
     email: britta.hale@nps.edu
--   fullname: Xisen Tian 
-    organization: Naval Postgraduate School
+  - ins: "X. Tian"
+    name: "Xisen Tian"
+    organization: "Naval Postgraduate School"
     email: xisen.tian1@nps.edu
 
 
-normative:
 
-informative:
+--- abstract 
+This document describes the Paired Messaging Layer Security (MLS) extension that improves Post Compromise Security for devices that are unable to self-update using a trusted paired device. 
 
----abstract
-
-# Done since last major commit
-
-# TODOs
-- Specify the format of the notification message.
-- Add context on how to efficiently terminate Paired MLS 
-<!--- How to more efficiently terminate PairedMLS without relying on being re-added to the group. Is there a way to self-remove and then self-add? (think this can be todo for later)--->
+<!-- TODOs
+ - Specify the format of the notification message.
+ - Add context on how to efficiently terminate Paired MLS 
+ - How to more efficiently terminate PairedMLS without relying on being re-added to the group. Is there a way to self-remove and then self-add? (think this can be todo for later)
 - Add token passing option 
 
-<!--
-#NOTES from ESM
+NOTES from ESM
 - In terminology passive/active device seems to refer to the original owner (in case of leaf node) instigator, or initiator otherwise. should it really be possible to change roles? I agree that online/offline should be changable but not ownership
 
 - In 3. Extension... devices are said to be paired after randomness is negotiated, what about signature keys for specific node?
 -->
 
 
+--- middle 
 
-# Abstract 
-This document describes the Paired Messaging Layer Security (MLS) extension that improves Post Compromise Security for devices that are unable to self-update using a trusted paired device. 
+# Introduction
+
+Paired MLS allows a trusted device to update the security parameters of another group member. The trusted paired device can be added to the group or can be another existing group member. The Paired MLS extension builds upon MLS (see [1]). This document presents two operational modes for the Paired MLS_ extension; interested readers can learn about other cases that were evaluated at [FHX23]. 
+
+The Paired MLS extension describes a standard case where each device possesses its own signature key. To enable the standard Paired MLS extension, the MLS anchor node must accommodate being shared by at least two devices. If the anchor node is an MLS leaf node, this means that the leaf node would store at least two sets of signature keys. 
+An additional operational mode is described, *Hidden* mode, where the paired devices share a signing key and the paired device is able to issue digital signatures on behalf of the partner device in addition to PCS updates. Caveats to Hidden mode are discussed further under Security Considerations. 
 
 # About This Document
 
@@ -86,26 +94,13 @@ Copyright (c) 2023 IETF Trust and the persons identified as the document authors
 This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document. Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Revised BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Revised BSD License.
 
 
-# Table of Contents
+# Terminology
 
-1. Terminology
-2. Introduction
-3. Extension Execution
-4. Security Considerations 
-5. Operational Modes   
-7. Extension Requirements to MLS 
-8. IANA Considerations
-9. Acknowledgements 
-10. Normative References 
-
-
-# 1. Terminology
-
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14, [RFC2119], and [RFC8174] when, and only when, they appear in all capitals, as shown here.
 
 The terms MLS client, MLS member, MLS group, Leaf Node, GroupContext, KeyPackage, Signature Key, Handshake Message, Private Message, Public Message, and RequiredCapabilities have the same meanings as in the [MLS protocol] <https://www.rfc-editor.org/rfc/rfc9420.html>.
 
-Generally, ___Paired MLS___ involves two paired devices, where one device can perform PCS updates in an MLS group on behalf of the other device. Without loss of generality, we define the one performing updates as the active device and the device not performing the update as the passive device:
+Generally, Paired MLS involves two paired devices, where one device can perform PCS updates in an MLS group on behalf of the other device. Without loss of generality, we define the one performing updates as the active device and the device not performing the update as the passive device:
 
 _Passive Device_: A passive device is a user equipment device that is not issuing updates for a given period. Such a device may operate in receive-only mode or in another limited fashion such that sending regular keying updates is impractical or even impossible. A passive device may be offline or online, i.e., if the passive device is online it can receive application and group management messages, but is restricted from issuing updates.
 
@@ -146,15 +141,8 @@ The idea that the puncturable *something* can't be replayed..
 -->
 
 
-# 2. Introduction
 
-___Paired MLS___ allows a trusted device to update the security parameters of another group member. The trusted paired device can be added to the group or can be another existing group member. The ___Paired MLS___ extension builds upon MLS (see [1]). This document presents two operational modes for the ___Paired MLS___ extension; interested readers can learn about other cases that were evaluated at [FHX23]. 
-
-The ___Paired MLS___ extension describes a standard case where each device possesses its own signature key. To enable the standard ___Paired MLS___ extension, the MLS anchor node must accommodate being shared by at least two devices. If the anchor node is an MLS leaf node, this means that the leaf node would store at least two sets of signature keys. 
-An additional operational mode is described, *Hidden* mode, where the paired devices share a signing key and the paired device is able to issue digital signatures on behalf of the partner device in addition to PCS updates. Caveats to Hidden mode are discussed further under ___Security Considerations___. 
-
-
-# 3. Extension Execution 
+# Extension Execution 
 
 <!-- Paired MLS is an extension of MLS, as found in [1], per user, i.e. per MLS leaf node. Meaning that each MLS leaf node itself MAY decide whether it wishes to run the extension. This extension comes in two variantions, one where all group members are aware that an MLS node uses the extension and one where the usage is opaque to the remaining MLS group members.   
 -->
@@ -199,7 +187,7 @@ Optionally, if randomness between paired devices is transmitted online the follo
 MLS commands such as Remove, GroupInfo KeyPackage and Welcome take the form and are processed as according to [1]. 
 
 
-### 3.1 Issuing a Paired Update
+### Issuing a Paired Update
 
 Once A and B have been paired, active device A can issue an update on behalf of passive device B. A sends the update to the rest of the MLS group as a normal commit. From the perspective of other MLS group members this update will be indistinguishable from any other MLS update preformed by A. Furthermore, in hidden mode, updates by the paired devices A or B will appear to come from the anchor, due to the shared signing key. 
 A will send the *Notify* message to B, where *Notify* is indistinguishable to other group members from a commit message to B. The *Notify* message signals to B how it should use the shared randomness to derive the necessary update for the new group key in order to stay in sync with the new group epoch. 
@@ -227,7 +215,7 @@ Remaining MLS group members, which are labeled G1, ..., Gn, will receive the sta
 If any other MLS group member sends proposals or commits to the paired devices the process will follow the flow as defined in RFC9420 [1].
 
 
-### 3.2 Termination of Pairing 
+### Termination of Pairing 
 To end Paired MLS extension, either A or B may issue an out-of-band request to its paired device to cease paring. This request notifies the other device to stop using the shared randomness to update on the other's behalf. In standard mode, pairing termination can be enforced through a self-remove and re-add to the group.  
 In hidden mode, an out-of-band cease pairing request can similarly be issued, but enforcing the termination is more challenging since removing either device is opaque to the MLS given the shared signature key. This will be discussed further under Security Considerations. It is possible, however, to enforce termination of the pairing and hidden mode by removing both devices and re-adding under separate signature keys.
 
@@ -236,11 +224,11 @@ In hidden mode, an out-of-band cease pairing request can similarly be issued, bu
  **[TODO]** specify how to use a puncturable PRF to ensure the notification to ratchet the key can't be replayed or forged by an adversary. Since the devices share a random tape, their key derivation function will yield the same pseudorandom keys. 
 -->
 
-# 4. Security Considerations
+# Security Considerations
 The goal of the MLS extension is to reduce the PCS security risk in cases when group members are unable to update, or updates are seldom. The extension allows other MLS group member devices, or other additional devicses belonging to the same user to update on the passive device's behalf. The structure of a shared anchor node in the MLS tree and various devices under that in a subtree can be attractive for practical operational reasons, and the hidden mode could further allow a user to have multiple devices listed under their user identity leaf node; however there are security caveats to exploiting such structures and we will summarize trade-offs here.
 
 
-## 4.1 Transport Security 
+## Transport Security 
 Recommendations for preventing denial of service (DoS) attacks, or restricting transmitted messages are inherited from MLS. Furthermore, message integrity and confidentiality is, as for MLS, protected. 
 <!--
 An adversary that can observe network traffic will be able to discern group membership. The MLS packets for the extension are designed to be indistinguishable from regular MLS packets for anyone but the paired devices. As such, a network observer should not be able to determine which devices are paired based solely on packet analysis, however, since paired devices communicate using a separate channel, a network observer might be able to discern general communication from pairing by observing timing and frequency. To prevent the separated communication form leaking information directly, this channel MUST be encrypted. We RECOMMEND using a TLS connection as a minimum.
@@ -250,11 +238,11 @@ An adversary that can observe network traffic will be able to discern group memb
 If the shared randomness between paired devices is leaked then any entity in possession of this information will be able to generate the group session key when either of the devices update on behalf of the other. As such, the shared randomness MUST be stored, securely and encrypted on all applicable end devices when not in use. Furthermore, we strongly RECOMMEND that the random seeds are loaded offline through hardware. If this is not possible a secure, and encrypted channel MUST by utilized to negotiate, or distribute the randomness.   
 -->
 
-## 4.3 Post Compromise Security and Forward Secrecy
+## Post Compromise Security and Forward Secrecy
 The main goal of the extension is to reduce epoch sizes when a group member is unable to update. A full security analysis pertaining PCS and FS can be found in [FHX23]. If the extension is not utilized or if paired devices are simultaneously unable to update, FS and PCS security is reduced to that of the original underlying MLS protocol. The PCS benefits from active device updates are contingent on how the shared randomness is stored; if the passive device stores the shared randomness in active memory with other MLS state, then the PCS benefits cannot be assumed. Instead, the shared randomness MUST be stored more securely as with the signature private keys. Furthermore, we strongly RECOMMEND that the random seeds are loaded offline through hardware. If this is not possible, then the out-of-band 1-to-1 channel utilized to negotiate or distribute the randomness is critical to the security benefits; compromise of that negotiation or distribution reduces the PCS guarantees to that of RFC4920 [1].   
 
 
-## 4.4 Discontinuation of Pairings
+## Discontinuation of Pairings
 
 **[Todo] currently operating under a single paired device. If multiple all need to be removed and then re-added later.**
 Termination of pairing can be signaled as described above; in standard extension mode, if a malicious or unwitting device A ignores the signaling and continues to update on behalf of device B, there is no negative impact on security as B can still issue its own updates using its unique randomness. A can of course disrupt the key schedule if it ignores the signaling to terminate pairing and uses the shared randomness after B deletes it, but this similar as in MLS [1]. For such reasons, it is RECOMMENDED that B maintain the shared randomness after signaling termination of pairing until confirmation has been received from A. This does not affect forward secrecy.
@@ -262,7 +250,7 @@ Termination of pairing can be signaled as described above; in standard extension
 In hidden mode, where devices share a signature key, termination of pairing requires removal and re-addition of both devices, such that they are registered with separate signature keys. It is not possible to remove only one device, as any removed device will maintain access to the signature private key in the group. 
 
 
-## 4.5 Impersonation to the Group
+## Impersonation to the Group
 In Paired MLS standard mode, distinct signing keys are used by the main device and its paired device when issuing an update. Impersonation of other MLS group members is therefore not feasible given that the signature public keys are known. 
 
 In hidden mode, a single signing key is used by all paired devices. This could allow one or more paired devices to be opaque to the MLS group, which inhibits the MLS goals of transparency of group membership but supports possible user side goals of limiting tracking (e.g., if Alice possesses multiple devices that are group members). Thus, devices using the Paired MLS extension in hidden mode MUST be associated with the same group membership user identity, i.e., the paired devices may all belong to Alice but they should not belong to separate users Alice and Bob. 
@@ -270,7 +258,7 @@ In hidden mode, a single signing key is used by all paired devices. This could a
 Without the ability to interrogate the delivery service for anonymous hidden pairings, compromised or malicious paired devices may eavesdrop undetected in hidden mode. If a group key is leaked somehow, PCS can be achieved through an update by either of the paired devices. However, if the shared randomness source is compromised on one device, then both devices are irrevocably compromised as the attacker could duplicate generation of the update secrets used on either device. Similarly, the shared signature key in hidden mode means that it is impossible to remove a hidden device member and a hidden member can easily start new groups, impersonating other members; this is similar to signature key compromise in MLS [CHK21]. It is for these reasons that it is required that hidden mode is only used for devices associated with the same MLS user.
 
  
-## 4.6 Visability of paired devices to Delivery Service
+## Visability of paired devices to Delivery Service
 The detection of the active/passive status of the paired devices to the rest of the group is possible in standard mode, but the detection of pairing is not. Thus other group members may see that device A has updated frequently without knowing that it is on behalf of B.  This is because standard mode uses distinct signature keys for each device to issue signed updates to the group. 
 
 **TODO** If there is a consideration that the lack of pairing awareness in the group may result in a devices ejection from the group, it is possible to signal to the group that devices are paired and updates have been performed on behalf of B.
@@ -308,36 +296,10 @@ This operational mode is applicable when a user wants to explicitly announce tha
 -->
 
 
-# 6. Extension Requirements to MLS
+# Extension Requirements to MLS
 
-## 6.1 Leaf Node Contents
+## Leaf Node Contents
 The MLS leaf node will need to support multiple signature keys for the public guardian. The leaf node content is modified by changing `signature_key` to a vector of `SignaturePublicKey`. 
-<!--
-
-    struct {
-        HPKEPublicKey encryption_key;
-        SignaturePublicKey signature_key<V>;
-        Credential credential;
-        Capabilities capabilities;
-
-        LeafNodeSource leaf_node_source;
-        select (LeafNode.leaf_node_source) {
-            case key_package:
-                Lifetime lifetime;
-
-            case update:
-                struct{};
-
-            case commit:
-                opaque parent_hash<V>;
-        };
-
-        Extension extensions<V>;
-        /* SignWithLabel(., "LeafNodeTBS", LeafNodeTBS) */
-        opaque signature<V>;
-    } LeafNode;
--->
-
 <!--
 ## 6.2 Shared Randomness Establishment
 The security of this extension is based upon the security of the out-of-band channel to used to establish shared randomness. We RECOMMEND the shared-randomness be installed via protected hardware in the same way that long-term signing keys stored such that it is infeasible to be accessed by an adversary. The shared-randomness MAY be shared via a secure 1-to-1 channel such as a key encapsulation mechanism between the devices. 
